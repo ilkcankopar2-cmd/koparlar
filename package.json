@@ -1,0 +1,13 @@
+{
+  "name": "js-kendi-gelisimim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "day": "node --test src/day-01/notes.test.js"
+  }
+}
