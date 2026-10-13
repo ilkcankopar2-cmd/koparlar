@@ -7,7 +7,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test",
-    "day": "node --test src/day-01/notes.test.js"
+    "test": "node program/build.js && node --test program/mufredat.test.js",
+    "day": "node --test src/day-01/notes.test.js",
+    "build": "node program/build.js",
+    "calisma": "node program/build.js && node calisma/serve.js"
   }
 }
