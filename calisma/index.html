@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="tr" data-tema="sistem">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="JS Seri">
+  <meta name="theme-color" content="#f3f0e8">
+  <title>Backend JavaScript</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f0e8;
+      --paper: #fbf9f4;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --line: #ddd6c8;
+      --accent: #0c5c4a;
+      --warn: #8a4b12;
+      --code: #efeae0;
+      --tap: #e7f2ee;
+    }
+    :root[data-tema="koyu"] {
+      color-scheme: dark;
+      --bg: #141311;
+      --paper: #1c1b17;
+      --ink: #f3efe6;
+      --muted: #b7b0a4;
+      --line: #343029;
+      --accent: #8fd0b8;
+      --warn: #e2b07a;
+      --code: #26231e;
+      --tap: #1a2a24;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root[data-tema="sistem"] {
+        color-scheme: dark;
+        --bg: #141311;
+        --paper: #1c1b17;
+        --ink: #f3efe6;
+        --muted: #b7b0a4;
+        --line: #343029;
+        --accent: #8fd0b8;
+        --warn: #e2b07a;
+        --code: #26231e;
+        --tap: #1a2a24;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { max-width: 100%; overflow-x: hidden; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 18px/1.5 Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+    }
+    button, nav, summary { font: 17px/1.3 ui-sans-serif, system-ui, sans-serif; }
+    .ust, main { max-width: 40rem; margin: 0 auto; padding: 20px 20px 0; }
+    main { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+    h1, h2 { font-weight: 650; line-height: 1.25; }
+    h1 { margin: 0; font-size: 26px; }
+    h2 { margin: 28px 0 8px; font-size: 20px; }
+    p { margin: 0 0 12px; }
+    .ust-ad, .kicker, .ozet-tarih, .durum {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .ust-ad { margin: 0 0 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .kicker { margin-bottom: 6px; }
+    .sayilar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 8px 0 16px;
+    }
+    .sayilar div { border-top: 2px solid var(--accent); padding-top: 8px; }
+    .sayilar dt { font-family: ui-sans-serif, system-ui, sans-serif; color: var(--muted); font-size: 14px; }
+    .sayilar dd { margin: 4px 0 0; font-size: 22px; }
+    .genis { font-size: 17px; }
+    button {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 6px;
+    }
+    button.tam, a.tam, .saat-dugmeler button:first-child { background: var(--accent); color: #f7fffb; border-color: var(--accent); }
+    a.tam { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin: 8px 0 16px; text-decoration: none; border-radius: 6px; }
+    code { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.92em; }
+    :root[data-tema="koyu"] button.tam,
+    :root[data-tema="koyu"] a.tam,
+    :root[data-tema="koyu"] .saat-dugmeler button:first-child { color: #10231c; }
+    @media (prefers-color-scheme: dark) {
+      :root[data-tema="sistem"] button.tam,
+      :root[data-tema="sistem"] a.tam,
+      :root[data-tema="sistem"] .saat-dugmeler button:first-child { color: #10231c; }
+    }
+    button.tam { width: 100%; margin: 8px 0 16px; }
+    button.ikincil, .yan button { background: transparent; }
+    button[aria-pressed="true"] { background: var(--tap); border-color: var(--accent); }
+    .saat {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 0 12px;
+      margin: 0 -20px 16px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .saat-ust { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .faz { margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 15px; }
+    .sure { margin: 0; font-variant-numeric: tabular-nums; font-size: 32px; line-height: 1; }
+    .faz-yazi { color: var(--muted); font-size: 16px; margin: 6px 0 10px; }
+    .saat-dugmeler, .yan { display: flex; gap: 8px; }
+    .saat-dugmeler button, .yan button { flex: 1; }
+    .yan { margin-top: 12px; }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--code);
+      padding: 12px 14px;
+      font: 15px/1.45 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      margin: 0 0 16px;
+    }
+    .kacak { color: var(--warn); }
+    .durum.bitti, .durum.bugun { color: var(--accent); }
+    .durum.kacti { color: var(--warn); }
+    .cubuk { height: 6px; background: var(--line); margin: 8px 0 18px; }
+    .cubuk > span { display: block; height: 100%; background: var(--accent); }
+    details { border-top: 1px solid var(--line); }
+    summary {
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      padding: 8px 0;
+    }
+    summary strong { font-size: 18px; }
+    .ozet-tarih { grid-column: 2; }
+    .gunler { list-style: none; margin: 0 0 16px; padding: 0; }
+    .gunler button {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 10px;
+      text-align: left;
+      align-items: start;
+      background: transparent;
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      padding: 12px 0;
+      color: inherit;
+      font: inherit;
+    }
+    .gun-no { font-family: ui-sans-serif, system-ui, sans-serif; color: var(--muted); }
+    .gun-konu { font-size: 17px; }
+    .bloklar { margin: 0 0 16px; padding-left: 20px; }
+    .bloklar li { margin: 0 0 8px; }
+    .alt {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--paper);
+      border-top: 1px solid var(--line);
+      padding-bottom: env(safe-area-inset-bottom);
+      z-index: 3;
+    }
+    .alt button {
+      min-height: 52px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--muted);
+    }
+    .alt button[aria-current="page"] { color: var(--accent); font-weight: 650; }
+    @media (max-width: 520px) {
+      .sayilar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="ust">
+    <p class="ust-ad">Backend JavaScript</p>
+    <h1 id="baslik" tabindex="-1">Bugün</h1>
+  </header>
+  <main id="ekran"></main>
+  <nav class="alt" aria-label="Bölümler">
+    <button type="button" data-git="bugun">Bugün</button>
+    <button type="button" data-git="ders">Ders</button>
+    <button type="button" data-git="mufredat">Müfredat</button>
+    <button type="button" data-git="duzen">Düzen</button>
+  </nav>
+  <script>
+globalThis.SERI = {"meta":{"baslangic":"2026-10-19","bitis":"2027-04-03","baslangicYazi":"19 Ekim 2026 pazartesi","bitisYazi":"3 Nisan 2027 cumartesi","toplamGun":144,"toplamHafta":24,"gunlukSaat":2,"gunlukDakika":120,"toplamSaat":288,"haftalikGun":6,"dinlenme":"pazar"},"bloklar":[{"ad":"Kavram","dk":40,"mola":false,"yazi":"Günün metnini oku. Varsa kısa örneği çalıştır. İki cümleyle kendi ağzından yaz."},{"ad":"Mola","dk":5,"mola":true,"yazi":"Ekranı bırak."},{"ad":"Uygulama","dk":55,"mola":false,"yazi":"Kodu sohbete yaz. Test yeşil olana kadar devam et."},{"ad":"Mola","dk":5,"mola":true,"yazi":"Ekranı bırak."},{"ad":"Boz","dk":15,"mola":false,"yazi":"Kodu bilerek boz. Hatanın tamamını oku. Düzelt. Birine anlatır gibi beş cümle yaz."}],"haftalar":[{"n":1,"ad":"Dil","amac":"Fonksiyon, hata, modül ve söz. Notlar bellekte durur.","baslangic":"2026-10-19","bitis":"2026-10-24","baslangicYazi":"19 Ekim 2026 pazartesi","bitisYazi":"24 Ekim 2026 cumartesi","gunler":[1,2,3,4,5,6]},{"n":2,"ad":"HTTP","amac":"İstek, cevap, sunucu, Express. Veri hâlâ bellekte.","baslangic":"2026-10-26","bitis":"2026-10-31","baslangicYazi":"26 Ekim 2026 pazartesi","bitisYazi":"31 Ekim 2026 cumartesi","gunler":[7,8,9,10,11,12]},{"n":3,"ad":"Veritabanı","amac":"SQL, tablo, ilişki, transaction. Notlar Postgres'te.","baslangic":"2026-11-02","bitis":"2026-11-07","baslangicYazi":"2 Kasım 2026 pazartesi","bitisYazi":"7 Kasım 2026 cumartesi","gunler":[13,14,15,16,17,18]},{"n":4,"ad":"Kimlik","amac":"Şifre, oturum, yetki, tek hata biçimi, sayfalama.","baslangic":"2026-11-09","bitis":"2026-11-14","baslangicYazi":"9 Kasım 2026 pazartesi","bitisYazi":"14 Kasım 2026 cumartesi","gunler":[19,20,21,22,23,24]},{"n":5,"ad":"Test ve sınır","amac":"Birim test, HTTP testi, enjeksiyon, limit, log.","baslangic":"2026-11-16","bitis":"2026-11-21","baslangicYazi":"16 Kasım 2026 pazartesi","bitisYazi":"21 Kasım 2026 cumartesi","gunler":[25,26,27,28,29,30]},{"n":6,"ad":"Çalışan servis","amac":"Ortam, Docker, migration, sağlık, kapanış, kısa yük.","baslangic":"2026-11-23","bitis":"2026-11-28","baslangicYazi":"23 Kasım 2026 pazartesi","bitisYazi":"28 Kasım 2026 cumartesi","gunler":[31,32,33,34,35,36]},{"n":7,"ad":"Katman","amac":"Yol, iş kuralı ve veri ayrı dosyalarda. Aynı not API.","baslangic":"2026-11-30","bitis":"2026-12-05","baslangicYazi":"30 Kasım 2026 pazartesi","bitisYazi":"5 Aralık 2026 cumartesi","gunler":[37,38,39,40,41,42]},{"n":8,"ad":"Olay döngüsü","amac":"Yığın, microtask, timer. Sunucu ne zaman sağır kalır.","baslangic":"2026-12-07","bitis":"2026-12-12","baslangicYazi":"7 Aralık 2026 pazartesi","bitisYazi":"12 Aralık 2026 cumartesi","gunler":[43,44,45,46,47,48]},{"n":9,"ad":"Nesne ve bellek","amac":"Referans, kapanış, this, prototype, Map. Sızıntı nerede birikir.","baslangic":"2026-12-14","bitis":"2026-12-19","baslangicYazi":"14 Aralık 2026 pazartesi","bitisYazi":"19 Aralık 2026 cumartesi","gunler":[49,50,51,52,53,54]},{"n":10,"ad":"Akış","amac":"Buffer, stream, geri basınç, gövde limiti.","baslangic":"2026-12-21","bitis":"2026-12-26","baslangicYazi":"21 Aralık 2026 pazartesi","bitisYazi":"26 Aralık 2026 cumartesi","gunler":[55,56,57,58,59,60]},{"n":11,"ad":"Sorgu","amac":"Havuz, indeks, N+1, izolasyon, kilit.","baslangic":"2026-12-28","bitis":"2027-01-02","baslangicYazi":"28 Aralık 2026 pazartesi","bitisYazi":"2 Ocak 2027 cumartesi","gunler":[61,62,63,64,65,66]},{"n":12,"ad":"Şema","amac":"Migration ileri ve geri. Kısıt. Yedekten dönmek.","baslangic":"2027-01-04","bitis":"2027-01-09","baslangicYazi":"4 Ocak 2027 pazartesi","bitisYazi":"9 Ocak 2027 cumartesi","gunler":[67,68,69,70,71,72]},{"n":13,"ad":"Oturum ayrıntı","amac":"Yavaş özet, çerez bayrakları, CSRF, iptal.","baslangic":"2027-01-11","bitis":"2027-01-16","baslangicYazi":"11 Ocak 2027 pazartesi","bitisYazi":"16 Ocak 2027 cumartesi","gunler":[73,74,75,76,77,78]},{"n":14,"ad":"Saldırı yüzeyi","amac":"Parametreli sorgu, sızıntı, hız sınırı, zaman aşımı.","baslangic":"2027-01-18","bitis":"2027-01-23","baslangicYazi":"18 Ocak 2027 pazartesi","bitisYazi":"23 Ocak 2027 cumartesi","gunler":[79,80,81,82,83,84]},{"n":15,"ad":"Önbellek","amac":"TTL, yazınca silmek, aynı anda dolan önbellek.","baslangic":"2027-01-25","bitis":"2027-01-30","baslangicYazi":"25 Ocak 2027 pazartesi","bitisYazi":"30 Ocak 2027 cumartesi","gunler":[85,86,87,88,89,90]},{"n":16,"ad":"Kuyruk","amac":"İşi istekten ayır. Kuyruk Postgres tablosu. Ayrı ürün yok.","baslangic":"2027-02-01","bitis":"2027-02-06","baslangicYazi":"1 Şubat 2027 pazartesi","bitisYazi":"6 Şubat 2027 cumartesi","gunler":[91,92,93,94,95,96]},{"n":17,"ad":"İz","amac":"Yapısal log, istek kimliği, sağlık ve hazır ucu.","baslangic":"2027-02-08","bitis":"2027-02-13","baslangicYazi":"8 Şubat 2027 pazartesi","bitisYazi":"13 Şubat 2027 cumartesi","gunler":[97,98,99,100,101,102]},{"n":18,"ad":"Süreç","amac":"SIGTERM, açık istek, havuz, işçi, yeniden kalkış.","baslangic":"2027-02-15","bitis":"2027-02-20","baslangicYazi":"15 Şubat 2027 pazartesi","bitisYazi":"20 Şubat 2027 cumartesi","gunler":[103,104,105,106,107,108]},{"n":19,"ad":"Dayanıklılık","amac":"Süre sınırı, tekrar, kısa kesme, aynı iş anahtarı.","baslangic":"2027-02-22","bitis":"2027-02-27","baslangicYazi":"22 Şubat 2027 pazartesi","bitisYazi":"27 Şubat 2027 cumartesi","gunler":[109,110,111,112,113,114]},{"n":20,"ad":"Hız","amac":"Ölçmeden değiştirme. Havuz, senkron özet, alan seçimi.","baslangic":"2027-03-01","bitis":"2027-03-06","baslangicYazi":"1 Mart 2027 pazartesi","bitisYazi":"6 Mart 2027 cumartesi","gunler":[115,116,117,118,119,120]},{"n":21,"ad":"Sözleşme","amac":"Uyumlu değişiklik, sürüm, eski istemci, sözleşme testi.","baslangic":"2027-03-08","bitis":"2027-03-13","baslangicYazi":"8 Mart 2027 pazartesi","bitisYazi":"13 Mart 2027 cumartesi","gunler":[121,122,123,124,125,126]},{"n":22,"ad":"Kayıt","amac":"Arama, kararlı sıra, yumuşak silme, denetim izi.","baslangic":"2027-03-15","bitis":"2027-03-20","baslangicYazi":"15 Mart 2027 pazartesi","bitisYazi":"20 Mart 2027 cumartesi","gunler":[127,128,129,130,131,132]},{"n":23,"ad":"Üretim","amac":"Ortam, sır, imaj, tek komut, duman testi.","baslangic":"2027-03-22","bitis":"2027-03-27","baslangicYazi":"22 Mart 2027 pazartesi","bitisYazi":"27 Mart 2027 cumartesi","gunler":[133,134,135,136,137,138]},{"n":24,"ad":"Kapak","amac":"Aynı servisi baştan sona anlatacak kadar sıkı tekrar.","baslangic":"2027-03-29","bitis":"2027-04-03","baslangicYazi":"29 Mart 2027 pazartesi","bitisYazi":"3 Nisan 2027 cumartesi","gunler":[139,140,141,142,143,144]}],"gunler":[{"n":1,"konu":"Fonksiyon, dizi, nesne. Bellek içi not defteri.","ozet":"Bir not listesi fonksiyona girer, yeni liste çıkar. Eski liste durur.","ayrinti":"Dizi ve nesne değerle değil, referansla durur. push eski diziyi değiştirir; onu çağıran da değişmiş hali görür. Bugün her fonksiyon yeni dizi döndürür. id sayı olarak sende durur, metin kenar boşluğu atılmış stringdir.","uygulama":"src/day-01/notes.js içindeki addNote, removeNote, findNotes fonksiyonlarını yaz.\nDiziyi yerinde değiştirme.\nBoş metinde hata mesajında metin geçsin. Olmayan id'de bulunamadı geçsin.\nİlk id 1. Sonraki id, eldeki en büyük id artı 1.\nArama büyük küçük harf bakmaz. Boş arama listenin kopyasını verir, aynı dizi değil.","bitti":"npm run day komple yeşil.","ornek":null,"hafta":1,"tarih":"2026-10-19","tarihYazi":"19 Ekim 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":2,"konu":"Hata fırlatma ve yakalama.","ozet":"Hata bir değerdir. Fırlatınca yığın, biri yakalayana kadar yukarı çıkar.","ayrinti":"throw new Error(...) kullan. Düz metin fırlatırsan yığın izi olmaz. error.cause ile alt sebebi taşı. Boş catch hatayı siler. Ya yeniden fırlat ya da tek yerde biçimlendir. Mesaj sözleşme olsun: test o cümleyi arar.","uygulama":"Gün 1 fonksiyonları aynı kalsın.\nÜstüne bir sarmalayıcı yaz: findNotes'u çağır, olmayan bir id'yi removeNote ile sil, hatayı yakala, cause zincirini konsola yaz, sonra hatayı yeniden fırlat.\nBilerek bir catch'i boş bırak, hatanın kaybolduğunu gör, düzelt.","bitti":"Boş metin ve olmayan id hataları duruyor. Yuttuğun hatayı geri açtığını beş cümleyle yazdın.","ornek":"try {\n  removeNote([{ id: 1, text: \"a\" }], 9);\n} catch (error) {\n  console.log(error.message);\n  throw error;\n}","hafta":1,"tarih":"2026-10-20","tarihYazi":"20 Ekim 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":3,"konu":"Modül. Dosyalar arası sınır.","ozet":"Her dosya kendi kapsamıdır. Dışarı export ettiğin kadar görünür.","ayrinti":"Bu depo type module. import yolu dosyaya göredir ve .js uzantısı durur. Node modülü ilk importta çalıştırır, sonra aynı nesneyi önbellekten verir. Döngüsel importta karşı dosyanın exportu henüz boş olabilir. Ortak durum için modül kapsamına dizi koyma; durumu parametre yap.","uygulama":"notes.js yalnız üç fonksiyonu export etsin.\nYeni bir dosya aç: createStore. İçinde liste durur, dışarı add, remove, find verir.\nİkinci bir dosyadan onu import et. Listeyi dosyanın dışına sızdırma.","bitti":"İki dosya var. Dışarıdan listeye push yapılamıyor. Gün 1 testleri hâlâ yeşil.","ornek":null,"hafta":1,"tarih":"2026-10-21","tarihYazi":"21 Ekim 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":4,"konu":"Promise.","ozet":"Promise bekleyen bir sonuçtur. Biter, olmaz, ya da askıda kalır.","ayrinti":"then microtask kuyruğuna yazılır. Senkron kod bitmeden then çalışmaz. Aynı değeri iki kez çözemezsin; ilki kazanır. reject edilmiş ve yakalanmamış promise süreci uyarır. Promise.resolve ile zaten bitmiş işi de aynı zincire sokarsın.","uygulama":"addNote'u hemen çağıran bir fonksiyon yaz, sonucu Promise.resolve ile sar.\nAyrı bir fonksiyon boş metinde reject etsin.\nİkisini then ve catch ile bağla. Konsol sırasını yaz: önce senkron satır, sonra promise.","bitti":"Konsoldaki sıra senkron, sonra çözülen, sonra reddedilen. Yakalanmamış reject kalmadı.","ornek":"console.log(\"once\");\nPromise.resolve(\"sonra\").then((value) => console.log(value));\nconsole.log(\"ara\");\n// once, ara, sonra","hafta":1,"tarih":"2026-10-22","tarihYazi":"22 Ekim 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":5,"konu":"async/await.","ozet":"await, bir promise'in bitmesini bekler. Fonksiyonun kendisi promise döner.","ayrinti":"async fonksiyon hata fırlatırsa o promise reject olur. await etmezsen hata kaybolur. await yalnızca async fonksiyonun içinde durur. Üst üste await, işleri sıraya koyar. Birbirini beklemesi gerekmeyen iki işi Promise.all ile yan yana koyarsın. Biri düşerse all reddeder.","uygulama":"İki sahte iş yaz: biri 50 ms sonra not ekler, biri 50 ms sonra arar. İkisini sırayla await et, süreyi yaz.\nSonra Promise.all ile yan yana çalıştır, süreyi yaz.\nBiri reject ederse hatanın async fonksiyondan çıktığını gör.","bitti":"Sıralı süre yaklaşık iki bekleyiş, yan yana süre yaklaşık bir bekleyiş. Hata await satırında yakalanıyor.","ornek":null,"hafta":1,"tarih":"2026-10-23","tarihYazi":"23 Ekim 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":6,"konu":"Haftalık: bellek içi not servisi, tek giriş dosyası.","ozet":"Haftanın parçaları tek kapıdan girer. Çağıran diziye dokunmaz.","ayrinti":"Tek giriş dosyası createNotebook verir. Dönen nesnede add, remove, find vardır. İç liste kapanışta durur, export edilmez. Hatalar gün 2'deki mesajlarla aynıdır. async yapmak zorunda değilsin; kapı senkron kalabilir. Karışık durmasın diye promise'e her yeri sarmayı bırak.","uygulama":"src altında tek bir notebook.js yaz.\nGün 1 kuralları bu kapıda da geçerli olsun.\nKısa bir çalıştırma dosyası: üç not ekle, birini sil, birini ara, konsola yaz.\nEski notes.js testleri bozulmasın.","bitti":"Tek dosyadan servis kullanılabiliyor. İç dizi dışarıdan okunamıyor. npm run day yeşil.","ornek":null,"hafta":1,"tarih":"2026-10-24","tarihYazi":"24 Ekim 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":7,"konu":"HTTP mesajı, durum kodu, JSON.","ozet":"İstek satır, başlık ve gövdedir. Cevap durum, başlık ve gövdedir.","ayrinti":"201 yeni kayıt, 204 gövdesiz başarı, 400 bozuk girdi, 404 yok, 409 çakışma. 200 her şeyin kovası değildir. JSON metindir; Content-Type application/json olmadan istemci tahmin eder. undefined, fonksiyon ve döngüsel nesne JSON'a girmez. Date stringe döner.","uygulama":"Bir notu elle JSON'a çevir.\nİçine bir Date ve bir undefined koy, stringify sonucunu yaz.\nHangi alanın kaybolduğunu gün notuna geç.\nDört cevap için durum kodunu şimdiden seç: ekleme, silme, boş metin, olmayan id.","bitti":"Dört durum kodu kâğıtta. JSON'da kaybolan alanı gördün.","ornek":null,"hafta":2,"tarih":"2026-10-26","tarihYazi":"26 Ekim 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":8,"konu":"node:http ile sunucu.","ozet":"node:http TCP'nin üstüne istek ve cevap nesnesi koyar. Framework yok.","ayrinti":"createServer her istekte bir kez çağrılır. Cevabı bitirmezsen istemci bekler. res.end gövdeyi kapatır. Gövdeyi req.on('data') ile parça parça okursun. Dinlenen port doluysa EADDRINUSE. Sunucuyu testten sonra close et, yoksa süreç durmaz.","uygulama":"createServer ile 127.0.0.1 üstünde bir port aç.\nGET /health gövdesi tamam ve durum 200 olsun.\nBaşka yol 404 olsun.\nSunucuyu bir fonksiyonla kapat.","bitti":"curl ile /health 200, bilinmeyen yol 404. Süreç kapanınca port boşalıyor.","ornek":null,"hafta":2,"tarih":"2026-10-27","tarihYazi":"27 Ekim 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":9,"konu":"Express: yol ve metod.","ozet":"Express, yol ve metodu fonksiyona bağlar. Altında hâlâ node:http vardır.","ayrinti":"app.get ve app.post sırayla bakar, ilk uyan çalışır. İstek gövdesi kendiliğinden nesne olmaz. express.json() gövdeyi req.body yapar. Yol parametresi req.params, sorgu req.query. İkisi de stringdir. Sayı istiyorsan sen çevirirsin.","uygulama":"Express'i kur. Gün 6'daki not defterini bellekte tut.\nPOST /notes not eklesin, 201 dönsün.\nGET /notes?q= arama yapsın.\nDELETE /notes/:id silsin.","bitti":"Üç uç curl ile çalışıyor. Boş metin 400, olmayan id 404.","ornek":null,"hafta":2,"tarih":"2026-10-28","tarihYazi":"28 Ekim 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":10,"konu":"Middleware.","ozet":"Middleware, cevaptan önce çalışan bir fonksiyondur. next ile sıradakine geçer.","ayrinti":"Sıra yazdığın sıradır. next çağrılmazsa istek orada kalır. next(err) hata middleware'ine atlar. Hata middleware'i dört parametre alır: err, req, res, next. O fonksiyon en sonda durur. Ondan sonra yazdığın ara katman hata görmez.","uygulama":"Her isteğe bir sayı yazan ara katman ekle. Sayıyı req üstüne koy.\nCevap başlığına X-Request-Id yaz.\nDört parametreli bir hata fonksiyonu, yakalanan hatayı 500 JSON yapsın.\nBilerek next çağırmamayı dene, isteğin asılı kaldığını gör, düzelt.","bitti":"Her cevapta X-Request-Id var. Fırlatılan hata 500 JSON. Asılı istek kalmadı.","ornek":null,"hafta":2,"tarih":"2026-10-29","tarihYazi":"29 Ekim 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":11,"konu":"Girdi doğrulama.","ozet":"Gövdeye güvenme. Tipi ve biçimi kapıda kontrol et.","ayrinti":"req.body her şey olabilir: dizi, sayı, ek alan. text string değilse 400. Kenar boşluğundan sonra boşsa 400. Bilinmeyen alanı reddet; sessizce yutma, sözleşme gevşer. Doğrulamayı yol fonksiyonunun içine gömme, ayrı fonksiyon olsun. Böylece HTTP'siz test edersin.","uygulama":"parseNoteBody(body) yaz.\nGeçerliyse kırpılmış metni dönsün.\nGeçersizse Error fırlatsın, mesajda girdi geçsin.\nExpress ucu yalnız bu fonksiyonun sonucunu kullansın.","bitti":"Sayı, boş string, ek alan ve doğru metin için dört örnek var. Üçü 400, biri 201.","ornek":null,"hafta":2,"tarih":"2026-10-30","tarihYazi":"30 Ekim 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":12,"konu":"Haftalık: not REST API, veri hâlâ bellekte.","ozet":"Haftanın uçları tek sunucuda. Veri süreç ölünce gider. Bu hafta bu kadar.","ayrinti":"Kaynak adı çoğul ve isim olsun: /notes. Fiili yola koyma. POST oluşturur, GET okur, DELETE siler. Güncelleme bu hafta yok. Cevap gövdesi { id, text }. Hata gövdesi { error }. Sunucu dosyası incedir; not kuralları başka dosyadadır.","uygulama":"Tek komutla sunucu kalksın.\nEkle, listele, ara, sil, olmayanı sil, bozuk gövde gönder.\nHer birinin durum kodunu bir listeye yaz.\nSüreç kapanınca verinin gittiğini bilerek yaz.","bitti":"Altı senaryonun durum kodu listede. Veri bellekte. Not kuralı HTTP dosyasında değil.","ornek":null,"hafta":2,"tarih":"2026-10-31","tarihYazi":"31 Ekim 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":13,"konu":"SQL ile seçmek.","ozet":"SQL, hangi satırın geleceğine dair bir cümledir. Tablo bu hafta sonraya kalabilir.","ayrinti":"select sütunları seçer, where satırı süzer, order by sırayı sabitler. order by yoksa sıra garanti değildir. limit keser. count(*) satır sayar, o satırlar sana gelmez. null karşılaştırması = ile olmaz; is null kullanırsın. Bugün sorguyu kâğıtta yaz, henüz veritabanı şart değil.","uygulama":"Not tablosu için şu cümleleri yaz: hepsini id sırasıyla seç, metinde geçenleri seç, tek id seç, sayıyı seç.\nSütunları yıldızla değil adıyla yaz.\nBoş sonuç ile hatanın aynı şey olmadığını bir cümleyle yaz.","bitti":"Dört sorgu kâğıtta. Sıra order by ile bağlı. Yıldız yok.","ornek":null,"hafta":3,"tarih":"2026-11-02","tarihYazi":"2 Kasım 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":14,"konu":"PostgreSQL, tablo, bağlantı.","ozet":"Postgres veriyi süreçten ayrı tutar. Sunucu kapansa da satır durur.","ayrinti":"Bağlantı bir oturumdur. Her istekte yeni bağlantı açıp kapatmak pahalıdır; havuz sonra gelecek, bugün tek istemci yeter. Şifre ve adres koda yazılmaz, ortam değişkenindedir. Tablo: notes(id bigint generated always as identity primary key, text text not null).","uygulama":"Postgres'i kendi makinede ya da Docker'da ayağa kaldır.\nnotes tablosunu yarat.\nnode-postgres ile bağlan, select 1 çalıştır, sonucu yaz.\nBağlantıyı kapat.","bitti":"select 1 sonuç veriyor. Tablo \\dt ile görünüyor. Adres kodun içinde değil.","ornek":null,"hafta":3,"tarih":"2026-11-03","tarihYazi":"3 Kasım 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":15,"konu":"Eklemek, güncellemek, silmek.","ozet":"insert satır ekler, update değiştirir, delete siler. Üçü de kaç satır etkilediğini söyler.","ayrinti":"insert ... returning id, text ile eklenen satırı geri alırsın. update ve delete için rowCount 0 ise kayıt yoktu, hata değildir; sen 404 yaparsın. where'siz update bütün tabloyu değiştirir. Bunu bir kez bilerek boş veritabanında gör, sonra where'siz hali sil.","uygulama":"Bellekteki add, remove, find yerine SQL yazan üç fonksiyon koy.\nAynı HTTP uçları çalışsın.\nSunucuyu kapat, aç, notun durduğunu gör.","bitti":"Yeniden başlatınca not duruyor. Olmayan id 404. where'siz güncelleme kodda yok.","ornek":null,"hafta":3,"tarih":"2026-11-04","tarihYazi":"4 Kasım 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":16,"konu":"Kullanıcı ve not ilişkisi.","ozet":"Not, bir kullanıcıya aittir. Bu, tabloda bir sütun ve bir kısıttır.","ayrinti":"users(id, email) ve notes.user_id. Foreign key, olmayan kullanıcıya not yazdırmez. email unique olsun. Silinen kullanıcıyı ne yapacağın bir karardır: restrict, notu da silmene izin vermez. Bugün restrict kalsın. Liste her zaman where user_id = $1 ile süzülür.","uygulama":"İki tabloyu ve foreign key'i yaz.\nİki kullanıcı aç.\nBirinin notu diğerinin listesinde görünmesin.\nOlmayan user_id ile insert dene, veritabanının reddettiğini gör.","bitti":"İki kullanıcının listesi karışmıyor. Sahte user_id insert'i düşüyor.","ornek":null,"hafta":3,"tarih":"2026-11-05","tarihYazi":"5 Kasım 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":17,"konu":"Transaction.","ozet":"İki yazma tek iştir. Biri olmazsa ikisi de kalmaz.","ayrinti":"begin, iş, commit. Hata olursa rollback. Postgres'te bir hata transaction'ı iptal eder; o bağlantıda commit denesen de olmaz, rollback gerekir. Havuz kullanıyorsan istemciyi transaction boyunca kimseyle paylaşma. await arasında başka istek aynı client'ı almasın.","uygulama":"Kullanıcı ve ilk notunu tek transaction'da yaz.\nNot metnini bilerek boş gönder, ikisinin de kalmadığını select ile gör.\nBaşarılı yolda ikisinin de durduğunu gör.","bitti":"Bozuk yolda ne kullanıcı ne not var. Sağlam yolda ikisi var.","ornek":null,"hafta":3,"tarih":"2026-11-06","tarihYazi":"6 Kasım 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":18,"konu":"Haftalık: notlar veritabanında.","ozet":"HTTP aynı kalır. Altındaki liste Postgres'tir.","ayrinti":"Bellek listesi üretim yolunda kalmasın. Test için belleği sonra geri getiririz. Bugün gerçek tablo var. Bağlantı dizesi ortamda. Şema bir sql dosyasında, sohbetin içinde değil. Sunucu açılışta şemayı elle çalıştırmak zorunda kalmasın: bir komut dosyası sql'i uygulasın.","uygulama":"schema.sql ve onu uygulayan bir komut yaz.\nPOST, GET, DELETE bu tabloya gitsin.\nSunucuyu iki kez yeniden başlat, veriyi kontrol et.\nİkinci kullanıcının notu birincinin silmesinde görünmesin.","bitti":"Komut boş veritabanında şemayı kuruyor. Uçlar tabloya yazıyor. Kullanıcılar karışmıyor.","ornek":null,"hafta":3,"tarih":"2026-11-07","tarihYazi":"7 Kasım 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":19,"konu":"Şifre özeti.","ozet":"Şifreyi saklamazsın. Yavaş bir özet saklarsın.","ayrinti":"sha256 şifre için yanlıştır çünkü hızlıdır. Hızlı özet, deneme saldırısına uygundur. node:crypto içindeki scrypt yavaştır ve tuzu senin vermen gerekir. Tuz her şifrede başka olur, özetin yanında durur. Aynı şifre iki kullanıcıda iki özet üretir. Karşılaştırma zamanı sızdırmasın diye timingSafeEqual kullan.","uygulama":"hashPassword ve verifyPassword yaz.\nAynı şifreyi iki kez özetle, sonuçlar farklı olsun, ikisi de verify ile doğru çıksın.\nYanlış şifre false olsun.\nVeritabanına düz şifre yazan bir satır varsa sil.","bitti":"İki özet birbirine eşit değil. Doğru şifre geçiyor, yanlış geçmiyor. Tabloda düz şifre yok.","ornek":null,"hafta":4,"tarih":"2026-11-09","tarihYazi":"9 Kasım 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":20,"konu":"Oturum.","ozet":"Girişten sonra tarayıcıya tahmin edilemeyen bir kimlik verirsin. Asıl oturum sunucudadır.","ayrinti":"Çerezde kullanıcı id'si koyma. Rastgele oturum id'si koy, sunucuda kime ait olduğunu tut. HttpOnly script okumasın, Secure yalnız HTTPS, SameSite cross-site gönderimi kısar. Çıkış, sunucudaki kaydı siler. Çerezi istemciden silmek yetmez.","uygulama":"POST /login e-posta ve şifre alır, çerez yazar.\nPOST /logout kaydı siler.\nGET /notes çerez yoksa 401.\nOturum id'sini kullanıcı id'si yapmayı dene, neden kötü olduğunu yaz, düzelt.","bitti":"Çerezsiz istek 401. Çıkıştan sonra aynı çerez 401. Çerezde kullanıcı id'si yok.","ornek":null,"hafta":4,"tarih":"2026-11-10","tarihYazi":"10 Kasım 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":21,"konu":"Yetki: kişi yalnız kendi kaydını siler.","ozet":"Kim olduğunu bilmek yetmez. Bu kayda hakkı var mı, ayrı sorudur.","ayrinti":"401 giriş yok. 403 giriş var, kayıt başkasının. 404 ile 403'ü karıştırma: başkasının kaydında 404 dönmek varlığını gizler, bu seride 403 kullan. Karar veritabanında where id = $1 and user_id = $2 ile de kapanır. Yalnız uygulamada if bırakırsan bir yol unutulur.","uygulama":"İki kullanıcı aç.\nBirincinin notunu ikinci silmeye çalışsın, 403 olsun, satır duruyor olsun.\nKendi notunu silsin, satır gitsin.\nSorguda user_id şartı olsun.","bitti":"Başkasının DELETE'i 403 ve satır duruyor. Kendi DELETE'i satırı siliyor.","ornek":null,"hafta":4,"tarih":"2026-11-11","tarihYazi":"11 Kasım 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":22,"konu":"Tek hata biçimi.","ozet":"Her hata aynı JSON şeklindedir. İstemci ikinci biçim tahmin etmez.","ayrinti":"Şekil { error: { code, message } }. code makine içindir: validation, unauthorized, forbidden, not_found. message insan içindir, sır içermez. Postgres'in ham metnini döndürme; tablo adı sızar. Bir mapper, bilinen hataları bu şekle çevirir. Bilinmeyen hata 500 ve genel mesajdır. Ayrıntı loga gider, cevaba değil.","uygulama":"Hata sınıflarını yaz: Validation, Unauthorized, Forbidden, NotFound.\nTek middleware hepsini aynı şekle koysun.\nBilerek bir SQL hatası fırlat, cevapta tablo adı olmadığını gör.","bitti":"Dört kodun dördü de aynı JSON şeklinde. 500 cevabında tablo adı yok.","ornek":null,"hafta":4,"tarih":"2026-11-12","tarihYazi":"12 Kasım 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":23,"konu":"Sayfalama ve filtre.","ozet":"Liste sonsuz büyümez. Bir sayfa, bir sınır, bir sıradır.","ayrinti":"offset büyük tabloda satır atlar ve araya satır girince sayfa kayar. İmleç daha sağlamdır: son gördüğün id'den sonrakiler. where id \u003c $cursor and user_id = $1 order by id desc limit $n. limit istemciden gelirse tavan koy, 100. Filtre metin araması bu hafta ILIKE olabilir. Sıra sabit değilse sayfa tekrar eder.","uygulama":"GET /notes?limit=2&cursor= yaz.\nÜç not ekle, iki sayfa al, aynı not iki sayfada olmasın.\nlimit=10000 istersen 100'e kesilsin.\nSıra id azalan olsun.","bitti":"Üç not iki sayfada, tekrar yok. limit tavanı çalışıyor.","ornek":null,"hafta":4,"tarih":"2026-11-13","tarihYazi":"13 Kasım 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":24,"konu":"Haftalık: çok kullanıcılı not API.","ozet":"Kayıt, giriş, kendi listesi, kendi silmesi, sayfa. Tek servis.","ayrinti":"Uçlar: POST /users, POST /login, POST /logout, GET /notes, POST /notes, DELETE /notes/:id. Başkasının notu listede yok. Hata şekli gün 22. Şema tek sql dosyası. Bu hafta yeni kütüphane ekleme.","uygulama":"İki kullanıcıyla şu filmi yaz: ikisi de kayıt, ikisi de giriş, biri not ekler, diğeri göremez, diğeri silemez, sahibi siler.\nSayfa sınırını da bu filmde kullan.","bitti":"Film baştan sona çalışıyor. Yeni çerçeve yok. Hata gövdeleri tek şekilde.","ornek":null,"hafta":4,"tarih":"2026-11-14","tarihYazi":"14 Kasım 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":25,"konu":"node:test ile birim test.","ozet":"Test, sözleşmeyi çalıştıran koddur. Elinle denemen yetmez.","ayrinti":"node:test ve node:assert/strict yeter. Ağ ve veritabanı birim teste girmez. Saf fonksiyon: girdi, çıktı. Her test kendi verisini kurar, başkasının kalanına güvenmez. assert.equal ile assert.deepEqual aynı değildir. Hata için assert.throws ve düzenli ifade.","uygulama":"parseNoteBody ve şifre fonksiyonları için test yaz.\nVeritabanı açma.\nBoş metin, ek alan, doğru metin, yanlış şifre kapsansın.\nnpm test bu dosyayı da görsün diye dosya adını *.test.js yap. Gün 1 testi hâlâ ayrı komutta.","bitti":"Yeni birim testler yeşil. İçlerinde bağlantı yok.","ornek":null,"hafta":5,"tarih":"2026-11-16","tarihYazi":"16 Kasım 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":26,"konu":"HTTP testi.","ozet":"Sunucuyu testin içinde aç, istek at, kapat.","ayrinti":"Port 0, işletim sistemine boş port seçtirir. Sabit 3000, ikinci testte çakışır. supertest şart değil; fetch yeter. Sunucu kapanmazsa test süreci asılı kalır. Veritabanı bu testte ya gerçek test veritabanıdır ya da bellek deposudur. İkisini bir testte karıştırma.","uygulama":"Uygulamayı port 0 ile açan bir test yaz.\nKayıt, giriş, not ekleme, çıkış.\nafter ile server.close.\nİkinci kez çalışınca port hatası olmasın.","bitti":"HTTP testi iki kez arka arkaya yeşil. Süreç kendiliğinden bitiyor.","ornek":null,"hafta":5,"tarih":"2026-11-17","tarihYazi":"17 Kasım 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":27,"konu":"SQL injection.","ozet":"Girdiyi SQL cümlesine yapıştırırsan, girdi cümleyi değiştirir.","ayrinti":"where email = '${email}' tehlikelidir. Tırnak kapatıp başka cümle eklenebilir. $1 ve değer listesi, veriyi cümleden ayırır. Sütun adı ve order by yönü parametre olamaz; onları beyaz liste ile seçersin. Bir kez bozuk hali yaz, testi kırmızı gör, parametreye geç.","uygulama":"Aramayı bilerek string birleştirerek yaz.\nMetin olarak %' or '1'='1 gönder, fazla satır geldiğini gör.\nAynı testi $1 ile yeşile çevir: o metin yalnız metin aransın, cümle olmasın.","bitti":"Kötü metin fazla satır döndürmüyor. Sorguda şablon içine girdi yapıştırmıyorsun.","ornek":null,"hafta":5,"tarih":"2026-11-18","tarihYazi":"18 Kasım 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":28,"konu":"Girdi sınırı ve zaman aşımı.","ozet":"Büyük gövde ve yavaş istemci sunucuyu meşgul eder.","ayrinti":"express.json({ limit: '16kb' }) üstünü 413 yapar. Limit yoksa bellek şişer. İstek süresi için sunucuda bir zamanlayıcı: belli sürede cevap yoksa 503 ve bağlantıyı bırak. Veritabanı çağrısına da süre koy. Sonsuz bekleyen await, o isteği sonsuz tutar.","uygulama":"16kb üstü gövdeye 413 ver.\nBilerek 5 saniye uyuyan bir uç yaz, istek zaman aşımını 1 saniye yap, 503 geldiğini gör.\nZaman aşımını üretim ucundan kaldır, test ucunda bırak.","bitti":"Büyük gövde 413. Aşırı uyuyan uç 503. Normal not ekleme hâlâ 201.","ornek":null,"hafta":5,"tarih":"2026-11-19","tarihYazi":"19 Kasım 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":29,"konu":"Log.","ozet":"Log, sonra okuyacağın olaydır. Konsola karışık cümle yetmez.","ayrinti":"Bir satır JSON olsun: time, level, requestId, method, path, status, ms. Şifre, çerez, özet yazma. Bilinmeyen hatada stack logda, cevapta değil. console.log serpiştirmek yerine tek log fonksiyonu. Seviye: info olay, error beklenmeyen.","uygulama":"Tek log fonksiyonu yaz.\nHer cevapta bir satır basılsın.\nLogin gövdesindeki şifrenin satırda olmadığını bir testle gör: log çıktısını yakala, şifre stringini ara.","bitti":"İstekte bir JSON satırı var. Yakalanan logda şifre yok.","ornek":null,"hafta":5,"tarih":"2026-11-20","tarihYazi":"20 Kasım 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":30,"konu":"Haftalık: testli API.","ozet":"Kayıt, yetki, enjeksiyon, limit ve log aynı serviste testli.","ayrinti":"Testler sırayla ve birbirinin verisine muhtaç olmadan geçsin. Paylaşılan e-posta yüzünden ikinci koşu düşmesin: e-postayı testin içinde üret. Haftalık film gün 24'teki filmdir, bu kez assert ile.","uygulama":"Bir HTTP testi gün 24 filmini baştan yazsın.\nBir test enjeksiyon metnini denesin.\nBir test büyük gövdeyi denesin.\nHepsi tek komutta yeşil olsun.","bitti":"Tek komut üç senaryoyu da geçiriyor. İkinci koşu da yeşil.","ornek":null,"hafta":5,"tarih":"2026-11-21","tarihYazi":"21 Kasım 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":31,"konu":"Ortam değişkeni.","ozet":"Aynı kod, farklı ortam. Fark, değişkenlerdedir.","ayrinti":"process.env değerleri stringdir ya da undefined. Sayı istiyorsan çevir ve bozuksa açılışta fırlat. Veritabanı adresi yoksa varsayılanı üretim sanıp bağlanma; açılış düşsün. .env dosyası depoya girmez. Örnek için .env.example girer, sır olmadan.","uygulama":"Zorunlu değişkenleri okuyan bir fonksiyon yaz: DATABASE_URL, SESSION_SECRET.\nBiri yoksa süreç açılmasın.\n.env.example yaz.\n.gitignore içinde .env duruyor mu bak.","bitti":"Değişkensiz açılış hata veriyor. .env commit edilmiyor. Örnek dosyada sır yok.","ornek":null,"hafta":6,"tarih":"2026-11-23","tarihYazi":"23 Kasım 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":32,"konu":"Docker ile PostgreSQL.","ozet":"Postgres'i her makinede elle kurmak yerine tek tarifte açarsın.","ayrinti":"Resmi postgres imajı yeter. Kök şifre ortamdan gelir. Veri bir volume'da durur, konteyner silinince silinmez. Portu yalnız 127.0.0.1'e bağla, makineyi dünyaya açma. Sağlık kontrolü pg_isready olsun. Tablet Docker çalıştırmaz; Docker, Node'un çalıştığı yerdedir.","uygulama":"compose dosyası yaz: postgres, port, volume, sağlık.\nBir komutla kaldır.\nUygulama bu veritabanına bağlansın.\nKonteyneri silip volume durunca verinin kaldığını gör.","bitti":"Tek komut Postgres'i kaldırıyor. Yeniden yaratınca eski volume ile veri duruyor.","ornek":null,"hafta":6,"tarih":"2026-11-24","tarihYazi":"24 Kasım 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":33,"konu":"Migration.","ozet":"Şema değişikliği sıralı dosyalardır. Uygulanan bir daha değişmez.","ayrinti":"schema_migrations(version text primary key). Dosya adı 001_init.sql gibi artsın. Komut, tabloda olmayanları sırayla uygular ve tek transaction içinde yazar. Eski dosyayı düzenlemek, başkasının veritabanını sessizce farklı bırakır. Değişiklik yeni dosyadır.","uygulama":"Mevcut şemayı 001 yap.\n002 ile notes.created_at ekle.\nKomutu iki kez çalıştır, ikinci kez bir şey uygulamadığını gör.\n001'i değiştirmenin neden yanlış olduğunu bir cümle yaz.","bitti":"İkinci koşu boş geçiyor. created_at yeni tabloda var. Eski migration dosyası aynı.","ornek":null,"hafta":6,"tarih":"2026-11-25","tarihYazi":"25 Kasım 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":34,"konu":"Sağlık ucu ve düzgün kapanış.","ozet":"Süreç ayakta mı, iş kabul ediyor mu, kapanırken yazıyı yarıda mı kesiyor.","ayrinti":"GET /health veritabanına gitmez, 200 döner. GET /ready select 1 yapar, olmazsa 503. SIGTERM gelince yeni bağlantı alma, açık istekler bitsin, havuzu kapat, sonra çık. Hemen process.exit, yarım yazıyı bırakır.","uygulama":"/health ve /ready yaz.\nVeritabanını durdur, ready 503, health 200 olsun.\nSIGTERM gönder, sürecin havuzu kapatıp çıktığını logla.","bitti":"İki ucun farkı testte var. SIGTERM sonrası süreç kendi çıkıyor.","ornek":null,"hafta":6,"tarih":"2026-11-26","tarihYazi":"26 Kasım 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":35,"konu":"Küçük yük altında davranış.","ozet":"Bir kez çalışan uç, yirmi kez üst üste başka davranabilir.","ayrinti":"Ölçmeden hüküm yok. Kısa bir döngü: 200 istek, eşzamanlılık 10. Süreleri topla, en kötüleri ayır. Hata oranı da sayılır. Bugün rekor kırma. Sayıyı yaz: kaç istek, kaçı 200, en yavaş kaç ms. Yarın onu yorumlarsın, bugün ölçersin.","uygulama":"node ile küçük bir yük döngüsü yaz. Dış araca mecbur değilsin.\nGET /health ve giriş yapmış GET /notes için ayrı sayı tut.\nSonucu gün notuna yaz.","bitti":"İki uç için istek sayısı, hata sayısı ve en yavaş süre yazılı.","ornek":null,"hafta":6,"tarih":"2026-11-27","tarihYazi":"27 Kasım 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":36,"konu":"Haftalık: tek komutla kalkan servis.","ozet":"Temiz bir başlangıç: veritabanı, migration, sunucu, bir duman testi.","ayrinti":"İnsan adımları unutulur. Bir komut Postgres'i bekler, migration uygular, sunucuyu açar. İkinci komut /health ve /ready dener. Sır hâlâ ortamda. Bu hafta yeni çerçeve yok.","uygulama":"npm script veya bir node dosyası bu sırayı çalıştırsın.\nVeritabanını boş volume ile kaldır, komut şemayı kursun, duman testi geçsin.\nAdımları README'ye üç satır yaz.","bitti":"Boş veritabanından tek komutla servis ayakta ve duman testi yeşil.","ornek":null,"hafta":6,"tarih":"2026-11-28","tarihYazi":"28 Kasım 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":37,"konu":"Yol, iş kuralı, veri: üç dosya.","ozet":"HTTP dosyası SQL bilmez. SQL dosyası durum kodu bilmez.","ayrinti":"routes istek ve cevap görür. domain metin kuralını ve yetkiyi bilir. db sorguyu bilir. Domain, db fonksiyonlarını parametre olarak alır. Üçünü bir dosyada tutmak bugün çalışır, yarın testte her şeyi Postgres'e bağlar. Sınırı bugün çiz.","uygulama":"Mevcut not eklemeyi üç dosyaya böl.\nDavranış değişmesin.\nHTTP testi hâlâ yeşil olsun.\nDomain dosyasında req geçmesin.","bitti":"Üç dosya duruyor. Eski film testi yeşil. Domain'de req yok.","ornek":null,"hafta":7,"tarih":"2026-11-30","tarihYazi":"30 Kasım 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":38,"konu":"Bağımlılığı parametreyle verme.","ozet":"İçeride gizli import yerine kapıdan alınan depo.","ayrinti":"createApp({ notes }) testte bellek deposu, üretimde SQL deposu alır. Modül kapsamında tekil depo, testi birbirine bağlar. Ayar da parametredir: limit tavanı, süre. Sabiti fonksiyonun içine gömme.","uygulama":"createApp bir depo nesnesi alsın.\nBellek deposu ile HTTP testini Postgres'siz geçir.\nÜretim girişi SQL deposunu versin.","bitti":"Aynı test veritabanı kapalıyken yeşil. Üretim girişi SQL deposunu veriyor.","ornek":null,"hafta":7,"tarih":"2026-12-01","tarihYazi":"1 Aralık 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":39,"konu":"Depo kapısı: bellek ve SQL aynı fonksiyonlar.","ozet":"İki depo aynı işleri yapar. Çağıran hangisi olduğunu bilmez.","ayrinti":"Kapı: list({ userId, limit, cursor }), add({ userId, text }), remove({ userId, id }). Dönüş şekli aynı. Bellek deposu diziyi kopyalar, yerinde değiştirmez. SQL deposu parametreli sorgu kullanır. Biri 404 fırlatıyorsa diğeri de aynı sınıfı fırlatır.","uygulama":"İki depo için aynı birim testleri çalıştır.\nOrtak bir test fonksiyonu depo alsın.\nBiri geçer biri düşerse kapıyı eşitle.","bitti":"Aynı test dosyası iki depoyu da geçiriyor.","ornek":null,"hafta":7,"tarih":"2026-12-02","tarihYazi":"2 Aralık 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":40,"konu":"İş kuralı istek ve cevabı bilmez.","ozet":"Kural, HTTP'den eski olmalıdır. Başka kapıdan da çağrılır.","ayrinti":"addNote({ userId, text }) nesne döner ya da hata fırlatır. statusCode domain'e koyma. Mesajı da HTTP'ye göre yazma. Kural örneği: boş metin yok, limit 1 ile 100 arası, kullanıcı kendi kaydını siler. Bunlar status kodu olmadan test edilir.","uygulama":"Domain testleri yaz: boş metin, başkasını silme, limit tavanı.\nİçlerinde ne req ne res olsun.\nHTTP testi bu kuralları yeniden saymasın, bir kez uçtan görsün yeter.","bitti":"Domain testleri HTTP'siz yeşil. Dosyada req yok.","ornek":null,"hafta":7,"tarih":"2026-12-03","tarihYazi":"3 Aralık 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":41,"konu":"Hata sınıfları: bulunamadı, yasak, çakışma.","ozet":"Katmanlar aynı hata sınıfını fırlatır. Kenar, onu HTTP'ye çevirir.","ayrinti":"Conflict 409: aynı e-posta. NotFound 404. Forbidden 403. Sınıfın bir code alanı vardır. Postgres unique ihlali 23505'tir; db katmanı onu Conflict yapar, routes bilmez. Böylece SQL kodu tek yerde durur.","uygulama":"Aynı e-posta ikinci kayıtta Conflict olsun.\nHTTP'de 409 ve code conflict.\nBellek deposu da aynı sınıfı fırlatsın.\n23505 routes dosyasında geçmesin.","bitti":"İkinci kayıt 409. 23505 yalnız db dosyasında.","ornek":null,"hafta":7,"tarih":"2026-12-04","tarihYazi":"4 Aralık 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":42,"konu":"Haftalık: üç katman tek serviste.","ozet":"Film aynı. İçerisi üçe bölünmüş.","ayrinti":"Yeni davranış ekleme. Sınırları koru. Bir dosyayı açınca yalnızca kendi işi görünsün. routes kısa kalsın.","uygulama":"Gün 30'daki testler yeşil.\nÜç dosyanın başına o dosyanın ne bilmediğini birer cümle yaz.\nBilerek domain'e req sok, testi bozmadan bunu fark eden bir kural koy: domain dosyasında req stringi varsa test düşsün.","bitti":"Eski testler yeşil. Domain'de req yok. Unique ihlali 409.","ornek":null,"hafta":7,"tarih":"2026-12-05","tarihYazi":"5 Aralık 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":43,"konu":"Yığın, kuyruk, bir tur.","ozet":"JavaScript bu süreçte tek yığında çalışır. I/O dışarıda bekler.","ayrinti":"Çağrılar yığına girer, bitince çıkar. Yığın boşalınca çalışma zamanı kuyruktan iş alır. Node'da dosya ve ağ libuv tarafındadır. JS, bitene kadar bir sonraki isteğin gövdesine bakmaz. Bu yüzden bir istekteki uzun hesap, yanındaki isteği bekletir.","uygulama":"Küçük bir sunucuda iki uç aç.\nBiri hemen 200 dönsün.\nDiğeri uzun bir senkron döngü yapsın.\nDöngü sürerken sağlık ucunun beklediğini gör ve süreyi yaz.","bitti":"Uzun döngü bitene kadar sağlık ucu cevap vermiyor. Süreyi yazdın.","ornek":"console.log(\"a\");\nsetTimeout(() => console.log(\"timer\"), 0);\nPromise.resolve().then(() => console.log(\"promise\"));\nconsole.log(\"b\");\n// a, b, promise, timer","hafta":8,"tarih":"2026-12-07","tarihYazi":"7 Aralık 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":44,"konu":"Microtask: promise önce, timer sonra.","ozet":"Aynı turda promise, timer'dan önce biter.","ayrinti":"Senkron kod biter. Sonra promise then ve queueMicrotask çalışır. Timer bir sonraki uygun fazdadır. Bu sıra testte sabittir. Yanlışlıkla bir then içinde yeniden then zinciri kurarsan, timer'a sıra gelmez. Zinciri sonsuz büyütme.","uygulama":"Örnekteki sırayı kendi konsolunda gör.\nSonra bir then içinden ikinci bir then ekle, timer'ın ondan da sonra geldiğini gör.\nSırayı gün notuna yaz.","bitti":"Yazdığın sıra: senkron, microtask'lar, timer.","ornek":null,"hafta":8,"tarih":"2026-12-08","tarihYazi":"8 Aralık 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":45,"konu":"nextTick, queueMicrotask, sırayı bozma.","ozet":"process.nextTick, promise microtask'ından önce boşalır.","ayrinti":"İç içe nextTick, I/O'ya sıra bırakmaz. Buna açlık denir. Günlük kodda nextTick kullanma. Sırayı bil, kaçın. queueMicrotask promise ile aynı kuyruktadır. Kütüphane bazen nextTick kullanır; kendi kodunda tekrarlama.","uygulama":"nextTick ve promise örneğini çalıştır, sırayı yaz.\nBilerek iç içe bin nextTick koy, bir timer'ın geciktiğini gör.\nSonra o döngüyü sil.","bitti":"tick, promise sırasında. Açlık örneğini sildin. Üretim kodunda nextTick yok.","ornek":"import { nextTick } from \"node:process\";\n\nPromise.resolve().then(() => console.log(\"promise\"));\nnextTick(() => console.log(\"tick\"));\n// tick, sonra promise","hafta":8,"tarih":"2026-12-09","tarihYazi":"9 Aralık 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":46,"konu":"Uzun senkron iş: sunucu o sırada sağır.","ozet":"Büyük JSON.parse, senkron özet ve uzun döngü aynı kapıya çıkar.","ayrinti":"scryptSync istek yolunda kullanırsan bütün süreç o süre sağırdır. scrypt'in callback veya promise biçimi I/O gibi sırayı bırakır. Büyük gövdeyi limit ile zaten kestin. Bugün sağırlığı bir kez ölç, sonra senkron ağır işi istek yolundan çıkar.","uygulama":"Şifre doğrulamada senkron bir bekletme varsa async olana geç.\nGeçişten önce ve sonra, o iş sürerken /health süresini yaz.\nİkisi de gün notunda olsun.","bitti":"Sağlık ucu, özet hesaplanırken artık aynı süre kilitlenmiyor. İki sayı yazılı.","ornek":null,"hafta":8,"tarih":"2026-12-10","tarihYazi":"10 Aralık 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":47,"konu":"setImmediate ve setTimeout(0).","ozet":"Ana dosyada bu ikisinin sırası garanti değildir. I/O içinden immediate önce gelir.","ayrinti":"setTimeout(0) timers fazına yazılır. setImmediate check fazına yazılır. I/O callback'i poll fazındadır; sonraki faz check olduğu için immediate önce çalışır. Testi buna göre kur: sırayı I/O içinden ölç. Ana dosyadaki yarışa test yazma.","uygulama":"Örneği çalıştır, sırayı gör.\nAynı iki çağrıyı ana dosyada on kez çalıştır, sıranın değişebildiğini gör.\nTesti yalnız I/O içindeki sıraya yaz.","bitti":"I/O içindeki test sabit: immediate, sonra timer.","ornek":"import { readFile } from \"node:fs\";\n\nreadFile(new URL(import.meta.url), () => {\n  setTimeout(() => console.log(\"timer\"), 0);\n  setImmediate(() => console.log(\"immediate\"));\n});\n// I/O içinden: immediate, sonra timer","hafta":8,"tarih":"2026-12-11","tarihYazi":"11 Aralık 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":48,"konu":"Haftalık: ağır iş sunucuyu dondurmaz.","ozet":"Not API aynı. İçinde senkron uzun iş yok.","ayrinti":"İstek yolu: doğrula, depoyu await et, cevap yaz. Döngüyle bekleme yok. nextTick yok. Şifre özeti async. Bunu bozan bir satır eklersen sağlık testi düşünce fark edeceksin.","uygulama":"Bir test, yavaş depo beklerken /health'in çabuk döndüğünü ölçsün.\nYavaş depoyu bilinçli gecikmeyle taklit et.\nÜretim kodunda senkron uzun döngü kalmasın.","bitti":"Test yeşil: depo gecikirken sağlık ucu kısa sürede 200.","ornek":null,"hafta":8,"tarih":"2026-12-12","tarihYazi":"12 Aralık 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":49,"konu":"Referans, kopya, dizi yerinde değişmesin.","ozet":"İki değişken aynı nesneyi gösteriyor olabilir.","ayrinti":"const nesneyi dondurmaz, yeniden bağlamayı engeller. İçini değiştirmek serbesttir. Depodan dönen listeyi çağıran push'larsa depo değişir. Dönmeden önce kopyala. structuredClone derin kopyadır. Yalnızca üst düzeyi kopyalamak iç nesneyi paylaşır.","uygulama":"Bellek deposundan dönen listeye push yap.\nDeponun değişmediğini teste yaz.\nİç nesneyi değiştiren bir denemeyi de yaz: kopya derin mi, gör.","bitti":"Test, dışarıdan push'un depoyu değiştirmediğini gösteriyor.","ornek":null,"hafta":9,"tarih":"2026-12-14","tarihYazi":"14 Aralık 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":50,"konu":"Closure: döngüde yakalanan değişken.","ozet":"İç fonksiyon, dış değişkenin kendisini tutar, kopyasını değil.","ayrinti":"for döngüsünde var tek bağlanır, bütün callback'ler son değeri görür. let her tur yeni bağlar. Senin kodun let kullanıyor. Yine de bir dizi fonksiyon üretip sonra çağırırsan, hepsi aynı let kutusunu değil, kendi turunun kutusunu görmeli. Bunu bir kez konsolda gör.","uygulama":"Üç fonksiyonluk bir dizi kur, her biri kendi indeksini yazsın.\nvar ile boz, hepsinin 3 yazdığını gör, let ile düzelt.\nOturum deposu bir kapanışsa, testlerin aynı diziyi paylaşmadığını kontrol et.","bitti":"Üç fonksiyon 0, 1, 2 basıyor. Testler birbirinin oturumunu görmüyor.","ornek":null,"hafta":9,"tarih":"2026-12-15","tarihYazi":"15 Aralık 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":51,"konu":"this kaybı, metodu koparmak.","ozet":"Metodu nesnesinden ayırırsan this başka yere gider.","ayrinti":"obj.add(...) içinde this obj'dir. const f = obj.add; f() içinde this undefined olur (strict). Üstüne express'e metod verirken bunu yaşarsın. Çözüm: ok fonksiyonu kendi this'ini bağlar, ya da fonksiyonu nesneye muhtaç etmeyip depoyu parametre yaparsın. Bu seride parametre yolu duruyor. this ile yeni kapı açma.","uygulama":"Bir nesnenin metodunu koparıp çağır, hatayı gör.\nAynı işi parametre alan düz fonksiyona çevir.\nSunucu kodunda this kullanan metod kalmasın.","bitti":"Koparma hatasını gördün. İstek yolunda this yok.","ornek":null,"hafta":9,"tarih":"2026-12-16","tarihYazi":"16 Aralık 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":52,"konu":"prototype paylaşımı, kendi alanı.","ozet":"Metot ortaktır. Veri her nesnenin kendindedir.","ayrinti":"Sınıf alanı her örnekte ayrı durur. Metot prototype üstündedir. Alanı prototype'a koyarsan örnekler paylaşır; bir kullanıcının notu diğerine sızar. Bunu bir kez bilerek yap, testi düşün, alanı örneğe indir.","uygulama":"İki Notebook örneği aç.\nBiri not eklesin, diğeri boş kalsın.\nListeyi sınıf alanına yanlışlıkla prototype'a taşıyan bir hali dene, sızıntıyı gör, düzelt.","bitti":"İki örneğin listesi ayrı. Paylaşılan yalnız metot.","ornek":null,"hafta":9,"tarih":"2026-12-17","tarihYazi":"17 Aralık 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":53,"konu":"Map, WeakMap, ne zaman çöp olur.","ozet":"Map anahtarı tutar, çöp toplayıcı onu silmez. WeakMap nesne anahtarı bırakılırsa silinebilir.","ayrinti":"Önbelleği WeakMap yaparsan listeleyemezsin ve anahtarını kaybedersen kayda ulaşamazsın. Oturumlar için Map uygundur; silmeyi sen yaparsın, yoksa süreç yaşadıkça birikir. WeakMap, dışarıdaki nesneyle ömür bağlamak içindir. Not listesi için değil.","uygulama":"Oturumları Map'te tut.\nÇıkışta delete çağır.\nÇıkışı unutunca map boyutunun arttığını bir teste yaz, sonra delete ile sabitle.\nNeden WeakMap olmadığını bir cümle yaz.","bitti":"Çıkışta Map küçülüyor. Cümlen yazılı: listeleyemiyorsun ve anahtar sende değil.","ornek":null,"hafta":9,"tarih":"2026-12-18","tarihYazi":"18 Aralık 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":54,"konu":"Haftalık: not tutacağı Map üstünde, sızıntı yok.","ozet":"Bellek deposu Map kullanır. SQL deposu aynı kapıdır.","ayrinti":"Kullanıcı id'si anahtar, notlar değer. Kopya kuralı duruyor. Çıkış ve silme Map'i büyütmeden bırakmaz. Haftaya yeni ürün yok.","uygulama":"Bellek deposunu Map'e geçir.\nAynı depo testleri yeşil kalsın.\nYüz oturum açıp kapat, boyutun geri düştüğünü ölç.","bitti":"Depo testleri yeşil. Yüz tur sonunda oturum Map'i boş.","ornek":null,"hafta":9,"tarih":"2026-12-19","tarihYazi":"19 Aralık 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":55,"konu":"Buffer ve UTF-8.","ozet":"Ağ ve dosya bayt taşır. Metin, baytların bir okumasıdır.","ayrinti":"JavaScript string'i UTF-16 kod birimidir. Türkçe karakter bir kod noktası olabilir, bayt olarak UTF-8'de birden fazla bayttır. Buffer.byteLength('ışık') ile 'ışık'.length aynı değildir. Keserken karakterin ortasından bayt bölme. JSON'u string birleştirerek parçalardan kurma; önce baytı topla, sonra utf8 çöz.","uygulama":"ışık ve a için length ve byteLength yaz.\nBir buffer'ı ortadan böl, utf8 string'in bozulabildiğini gör.\nNot metnini Buffer.from(text, 'utf8') ile yazıp geri oku.","bitti":"İki uzunluk gün notunda. Gidiş dönüşte metin aynı.","ornek":null,"hafta":10,"tarih":"2026-12-21","tarihYazi":"21 Aralık 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":56,"konu":"Stream parça parça.","ozet":"Bütün gövdeyi dizide biriktirmeden de okunur. Parça parça gelir.","ayrinti":"req bir okunur akıştır. data olayları buffer getirir. end bitiştir. Büyük dosyada hepsini push'layıp concat etmek yine bütününü belleğe alır. Bugün küçük not için toplamak kabul. Sınırı bil: yarın limit ve geri basınç var.","uygulama":"express.json kullanmadan POST gövdesini data ve end ile oku.\nParça sayısını logla.\nKüçük bir notta kaç parça geldiğini yaz.","bitti":"Gövdeyi elle okuyan uç, express.json ile aynı notu kaydediyor.","ornek":null,"hafta":10,"tarih":"2026-12-22","tarihYazi":"22 Aralık 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":57,"konu":"Backpressure: okumayı yavaşlat.","ozet":"Yazma yavaşsa okumaya devam etmek belleği şişirir.","ayrinti":"write false dönerse tampon doludur. drain gelene kadar oku'yu durdur. pipeline bunu senin için yönetir. Elinle pipe ediyorsan drain'i unutma. Not dışa aktarma bu yüzden pipeline ile gidecek.","uygulama":"Küçük bir okunur akıştan yavaş bir yazara veri aktar.\nwrite false olunca okumayı durdur, drain ile sürdür.\nDurdurmayı kaldırınca bellek veya tamponun büyüdüğünü görmek için sayaç koy.","bitti":"Sayaç: durdurunca bekleyen parça sınırlı, durdurmayınca artıyor.","ornek":null,"hafta":10,"tarih":"2026-12-23","tarihYazi":"23 Aralık 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":58,"konu":"Gövde boyutu limiti.","ozet":"Akış da gelse üst sınır şart. Sınır düşünce bağlantıyı kes.","ayrinti":"Parça toplamı 16kb'yi geçince okumayı kes, 413 dön, isteği yok say. Sınırı aşan kısmı diske yazma. express.json limiti ile elle okunan uç aynı sayıda olsun. İki kapı farklı limit taşımasın.","uygulama":"16kb üstü gövdede 413.\nSınırın bir bayt altında 201.\nElle okuyan yol ile json yolu aynı sınırı kullansın.","bitti":"İki yol da aynı sınırda. Bir bayt altı geçiyor, üstü 413.","ornek":null,"hafta":10,"tarih":"2026-12-24","tarihYazi":"24 Aralık 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":59,"konu":"pipeline, hata ve kapanış.","ozet":"Akış hatasında borunun iki ucu da kapanmalıdır.","ayrinti":"pipe hata olunca temizlemez. stream/promises içindeki pipeline hata olursa ikisini de yok eder. await pipeline(...) reject olursa sen 500 dönersin, süreç düşmez. Dinleyici ekleyip çıkarmamak da sızıntıdır; pipeline onu da toplar.","uygulama":"Bir not listesini satır satır yazan bir akış kur.\nYazarı bilerek hata versin.\npipeline ile hatanın yakalandığını ve sürecin ayakta kaldığını test et.","bitti":"Hata yakalanıyor. Testten sonra süreç kapanıyor. Açık dinleyici uyarısı yok.","ornek":null,"hafta":10,"tarih":"2026-12-25","tarihYazi":"25 Aralık 2026 cuma","haftaninGunu":5,"birlestirme":false},{"n":60,"konu":"Haftalık: notları satır satır dışa aktar.","ozet":"GET /notes/export kullanıcının notlarını JSON satırları olarak verir.","ayrinti":"Her satır bir not. Bütün listeyi tek JSON dizisi yapmak büyük hesapta belleği şişirir. Satır satır yaz. Yetki duruyor: yalnız kendi notu. Limit ve sayfa bu uçta yok; akış var. Hata olursa bağlantı yarım kalabilir, istemci yarım dosyayı kabul etmesin. Bugün bunu bir cümleyle belgele.","uygulama":"Export ucunu pipeline ile yaz.\nİki kullanıcının notu karışmasın.\nBir test, çıktı satır sayısının not sayısına eşit olduğunu görsün.","bitti":"Test yeşil. Başkasının notu dosyada yok. Bellekte tek dev dizi yok.","ornek":null,"hafta":10,"tarih":"2026-12-26","tarihYazi":"26 Aralık 2026 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":61,"konu":"Havuz: tek bağlantı yetmez.","ozet":"Aynı anda on istek, on oturum ister. Tek client sıraya dizer.","ayrinti":"pg.Pool bağlantıları ödünç verir. pool.query kısa iş için yeter. Transaction için client = await pool.connect(), iş bitince client.release(). release unutulursa havuz tükenir, sonraki istek bekler. Havuz boyutu bugün 10. 100 yapıp Postgres'i boğma.","uygulama":"Tek client ile 20 paralel istek at, süreyi yaz.\nHavuz ile aynısını yap, süreyi yaz.\nTransaction yolunda release'in finally içinde olduğunu gör.","bitti":"İki süre yazılı. finally olmadan sızıntı denemesini geri aldın. Boyut 10.","ornek":null,"hafta":11,"tarih":"2026-12-28","tarihYazi":"28 Aralık 2026 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":62,"konu":"İndeks ve sıralı tarama.","ozet":"İndeks, her satıra bakmadan satır bulmaktır.","ayrinti":"primary key zaten indekstir. user_id ile liste, indekssizse tablo taramasıdır. explain ile bak: seq scan mi, index scan mi. Küçük tabloda Postgres tarama seçebilir; bunu yanlış indeks sanma. İndeksi yine koy, çünkü not birikecek. İndeks yazmayı biraz yavaşlatır. Her sütuna indeks koyma.","uygulama":"notes(user_id, id desc) indeksini migration ile ekle.\nexplain çıktısını gün notuna yapıştır.\nBaşkasının notunu bu indeksli sorgunun hâlâ döndürmediğini test et.","bitti":"Migration uygulanmış. explain notu duruyor. Yetki testi yeşil.","ornek":null,"hafta":11,"tarih":"2026-12-29","tarihYazi":"29 Aralık 2026 salı","haftaninGunu":2,"birlestirme":false},{"n":63,"konu":"N+1: döngüde sorgu.","ozet":"Listeyi çekip her satır için bir sorgu daha atmak N+1'dir.","ayrinti":"Yüz not, yüz bir sorgu demektir. Tek select ile kullanıcı ve not yan yana gelir ya da notlar tek where user_id ile gelir. Döngüdeki await pool.query'yi arayıp bul. Testte sorgu sayısını sayan bir sarmalayıcı kullan.","uygulama":"Liste ucunda sorgu sayısını ölç.\nNot sayısı artsa da sorgu sayısı sabit kalsın.\nBunu bir teste kilitle.","bitti":"Test: 20 notta sorgu sayısı 2 nottaki ile aynı.","ornek":null,"hafta":11,"tarih":"2026-12-30","tarihYazi":"30 Aralık 2026 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":64,"konu":"İzolasyon: okuma kayması.","ozet":"İki transaction aynı satıra bakarken biri ötekinin yarım işini görmemelidir.","ayrinti":"Postgres varsayılanı read committed'dir. Başkasının commit etmediğini görmezsin. Commit edince sonraki select görür. Aynı transaction içinde iki select farklı sonuç verebilir. serializable bunu sıkar, hata alırsan işi yeniden denersin. Bu seri read committed'de kalır. Kaymayı bir kez gör.","uygulama":"İki bağlantı aç.\nBiri not ekleyip commit etmeden beklesin.\nDiğeri sayıyı okusun, göremesin.\nCommit sonrası ikinci okuma görsün.\nBunu gün notuna yaz.","bitti":"İki okumanın sonucu yazılı. Seviyeyi değiştirmedin.","ornek":null,"hafta":11,"tarih":"2026-12-31","tarihYazi":"31 Aralık 2026 perşembe","haftaninGunu":4,"birlestirme":false},{"n":65,"konu":"Kilit, deadlock.","ozet":"İki transaction birbirinin tuttuğu satırı beklerse ikisi de ilerlemez.","ayrinti":"Postgres birini iptal eder, hata 40P01. Uygulama bunu görünce o işi bir kez yeniden deneyebilir. İki tabloyu her yerde aynı sırada kilitlemek deadlock'u azaltır: önce users, sonra notes. Ters sıra bir yerde kalsın, denemede gör, sırayı eşitle.","uygulama":"İki transaction ile deadlock üret.\n40P01 geldiğini gör.\nKilit sırasını eşitle, aynı denemenin bittiğini gör.","bitti":"Hata kodunu bir kez gördün. Kodda kilit sırası tek yön.","ornek":null,"hafta":11,"tarih":"2027-01-01","tarihYazi":"1 Ocak 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":66,"konu":"Haftalık: liste tek sorgu, indeksli.","ozet":"Sayfalı liste bir select. İndeks migration'da. Havuz release ediyor.","ayrinti":"Yeni davranış yok. Sorgu sayısı testi ve yetki testi yeşil. explain notu duruyor.","uygulama":"Liste ucunu gözden geçir.\nDöngüde sorgu kalmışsa bitir.\nHaftalık test: iki kullanıcı, sayfa, tek sorguluk liste.","bitti":"Test yeşil. explain notun ve havuz boyutu 10 duruyor.","ornek":null,"hafta":11,"tarih":"2027-01-02","tarihYazi":"2 Ocak 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":67,"konu":"İleri migration.","ozet":"Yeni şema dosyası, eskisine dokunmadan ilerler.","ayrinti":"003 bugün bir iş yapsın: notes içine check (char_length(text) \u003c= 1000). Uygulama da aynı sınırı bilir. Veritabanı son kapıdır, uygulama unutursa o tutar. Mevcut satırlar kurala uymazsa migration düşer. Önce veriyi düzelt, sonra kısıtı koy.","uygulama":"003 migration'ını yaz.\n1001 karakterlik metni hem uygulama hem veritabanı reddetsin.\nKomut ikinci kez boş geçsin.","bitti":"Uzun metin 400. Veritabanı da reddediyor. İkinci migration koşusu boş.","ornek":null,"hafta":12,"tarih":"2027-01-04","tarihYazi":"4 Ocak 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":68,"konu":"Geri migration.","ozet":"İleri giden dosyanın geri alan çifti olur.","ayrinti":"Geri almak, ileri dosyayı silmek değildir. 003_down check'i kaldırır. Veri geri dönüşte siliniyorsa bunu dosyanın başına yaz. Geri komut, son sürümü bir adım indirir. Üretimde geri dönüş planı denenmemişse plan değildir.","uygulama":"003 için down yaz.\nYukarı, aşağı, yukarı çalıştır.\nArada uygulamanın açıldığını gör.","bitti":"Üç komut da bitiyor. Check inip geri geliyor.","ornek":null,"hafta":12,"tarih":"2027-01-05","tarihYazi":"5 Ocak 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":69,"konu":"Sütun eklerken eski kod.","ozet":"Yeni sütun bir anda bütün kodda var olmaz.","ayrinti":"Önce sütunu nullable ekle, kodu sonra yaz, en son not null yap. Ters sıra: eski süreç yeni zorunlu sütunu bilmez, insert düşer. Bugün created_at için bu sırayı kâğıtta yaz. Kodun şu an tek süreç, yine de sırayı böyle kur.","uygulama":"Bir sütunu iki migration'a böl: önce nullable, kodu okur yazsın, sonra not null.\nEski insert cümlesi yeni sütunu bilmeden de çalışsın diye varsayılan koy.","bitti":"Eski insert düşmüyor. Sütun sonunda not null.","ornek":null,"hafta":12,"tarih":"2027-01-06","tarihYazi":"6 Ocak 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":70,"konu":"Unique ve foreign key.","ozet":"Kural uygulamada da durur, veritabanında da. Biri unutulur.","ayrinti":"email unique. notes.user_id foreign key. Uygulama 23505'i Conflict yapıyor. Foreign key ihlali de ham gitmesin, 400 olsun. Kısıtı kaldırırsan kötü veri girer, kod dürüst olsa bile bir gün delinir.","uygulama":"Kısıtları migration'da say.\nHer biri için bir test: aynı e-posta, olmayan kullanıcı.\nHam Postgres metni cevapta yok.","bitti":"İki test doğru HTTP kodunu görüyor. Kısıtlar şemada.","ornek":null,"hafta":12,"tarih":"2027-01-07","tarihYazi":"7 Ocak 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":71,"konu":"Yedekten geri dön.","ozet":"Yedek, denenmemişse hikâyedir.","ayrinti":"pg_dump ile şema ve veri çıkar. Boş bir veritabanına geri yükle. Satır sayısı aynı mı bak. Yedeği tablete indirme; sır içerir, Node'un çalıştığı yerde kalsın. Bugün bir kez dump al, bir kez yükle, sayıyı yaz.","uygulama":"Üç not ve bir kullanıcı koy.\nDump al.\nBaşka bir veritabanına yükle.\nSayıları karşılaştır.","bitti":"İki veritabanında aynı kullanıcı ve not sayısı var.","ornek":null,"hafta":12,"tarih":"2027-01-08","tarihYazi":"8 Ocak 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":72,"konu":"Haftalık: boş veritabanı tek komutla kurulur.","ozet":"Volume boş. Komut migration'ları sırayla basar. Servis açılır.","ayrinti":"Elle schema.sql çalıştırmak kalmasın. Tek kaynak migration dosyaları. Down komutu da duruyor.","uygulama":"Volume'u sil.\nTek komut kurulsun.\nDuman testi ve bir not ekleme geçsin.\nDump komutunu da aynı gün notuna yaz.","bitti":"Boş volume'dan servis ayakta. Eski elle şema adımı yok.","ornek":null,"hafta":12,"tarih":"2027-01-09","tarihYazi":"9 Ocak 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":73,"konu":"Yavaş özet, tuz, zaman.","ozet":"Özet yavaş olmalı. Ne kadar yavaş, bir karardır.","ayrinti":"scrypt'in maliyeti N ile artar. Çok düşükse deneme ucuzlar, çok yüksekse giriş sunucuyu meşgul eder. Async biçimi kullan, Sync değil. Tuz en az 16 bayt, rastgele, özetin yanında durur. Süreyi ölç: bir doğrulama kaç ms. Sayıyı yaz, rekor arama.","uygulama":"Mevcut hashPassword scrypt kullanıyorsa süreyi ölç.\nSync ise promise biçimine geç.\nYanlış şifre de yaklaşık aynı sürede bitsin diye erken dönme.","bitti":"Bir doğrulamanın süresi yazılı. Sync çağrı istek yolunda yok.","ornek":null,"hafta":13,"tarih":"2027-01-11","tarihYazi":"11 Ocak 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":74,"konu":"Çerez bayrakları.","ozet":"Çerezin kim okur, nereye gider, üç bayrakla belirlenir.","ayrinti":"HttpOnly: sayfa betiği okuyamaz. Secure: yalnız HTTPS. SameSite=Lax günlük giriş için makul bir başlangıçtır. Path=/. Çereze oturum id'sinden başka şey koyma. Testte Secure, HTTP'de çerezi düşürür; test ortamında bunu bilinçli aç, üretimde kapatma.","uygulama":"Çerez seçeneklerini tek yerde topla.\nÜretimde Secure açık, testte kapalı olsun. Bu da ortam değişkenidir.\nÇerezin içinde kullanıcı id'si olmadığını teste yaz.","bitti":"Test, çerez değerinin oturum id'si olduğunu ve kullanıcı id'si olmadığını gösteriyor.","ornek":null,"hafta":13,"tarih":"2027-01-12","tarihYazi":"12 Ocak 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":75,"konu":"CSRF, tarayıcıdan gelen istek.","ozet":"Tarayıcı, çerezi başka siteden gelen isteğe de iliştirebilir.","ayrinti":"SameSite bunu daraltır, bitirmez. Durum değiştiren uçta ek bir başlık iste: X-Requested-With veya bir CSRF jetonu. Başlığı olmayan POST'u 403 yap. curl ile sen o başlığı koyarsın. Saf API ve çerez birlikteyse bu şarttır. Jetonu çerezin içine koyup aynısını başlığa kopyalamak da bir yoldur; ikisi de gelmeli.","uygulama":"POST /notes için özel başlık zorunlu olsun.\nBaşlıksız istek 403.\nGET başlıksız çalışsın.\nBunu HTTP testine yaz.","bitti":"Başlıksız POST 403. Başlıklı POST 201. GET etkilenmiyor.","ornek":null,"hafta":13,"tarih":"2027-01-13","tarihYazi":"13 Ocak 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":76,"konu":"Jetonu nerede tutmamalısın.","ozet":"Oturum çerezdeyse localStorage'a ikinci bir sır koyma.","ayrinti":"localStorage'ı sayfa betiği okur. XSS olursa jeton gider. Bu seri çerez ve HttpOnly kullanır. İstemciye JWT verip her istekte Authorization istemek ayrı bir tasarımdır; bugün onu ekleme. İki sistemi birden taşıma.","uygulama":"Kodda jwt, localStorage, Authorization araması yap.\nVarsa çıkar.\nNeden tek yöntem kullandığını beş cümle yaz.","bitti":"Tek yöntem çerez. İkinci bir jeton türü yok.","ornek":null,"hafta":13,"tarih":"2027-01-14","tarihYazi":"14 Ocak 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":77,"konu":"Sunucuda oturumu iptal.","ozet":"Çıkış ve şifre değişince eski oturum ölür.","ayrinti":"Çerezi silmek istemcinin işidir. Sunucu kaydı silmezse çerez çalınmışsa yaşamaya devam eder. Şifre değişince o kullanıcının bütün oturumlarını sil. Oturum tablosu: id, user_id, created_at. Bellek Map'i süreç ölünce gider; kalıcı oturum istiyorsan tabloya geç. Bugün tabloya geç.","uygulama":"sessions tablosu yaz.\nÇıkış tek satırı silsin.\nŞifre değişimi o kullanıcının bütün satırlarını silsin.\nEski çerezle istek 401 olsun.","bitti":"İki oturumdan biri çıkınca diğeri duruyor. Şifre değişince ikisi de 401.","ornek":null,"hafta":13,"tarih":"2027-01-15","tarihYazi":"15 Ocak 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":78,"konu":"Haftalık: giriş, çıkış, yetki yeniden yeşil.","ozet":"Kimlik haftası bitti. Eski film yeni kurallarla geçiyor.","ayrinti":"CSRF başlığı, oturum tablosu, yalnız kendi notu. Yeni çerçeve yok.","uygulama":"Gün 24 filmini bugünkü kurallarla yeniden test et.\nŞifre değişiminden sonra eski çerezi de filme ekle.","bitti":"Film testi yeşil. İkinci jeton türü yok.","ornek":null,"hafta":13,"tarih":"2027-01-16","tarihYazi":"16 Ocak 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":79,"konu":"Parametreli sorgu.","ozet":"Her yeni sorguda girdi, cümlenin dışında gider.","ayrinti":"Sütun adı ve sıralama yönü parametre olamaz. order by case when ya da beyaz liste: asc ve desc bir nesneden seçilir, istemcinin metninden değil. Bugün bütün sorguları tara. Şablon içine değer gömen kalmışsa düzelt.","uygulama":"Depo dosyasında şablon string ile SQL birleştirilen yer kalmasın.\nSıralama yönü beyaz listeden gelsin.\nBunu bir testle dene: direction=;drop gelince yok saysın, cümle bozulmasın.","bitti":"Kötü yön 400. Sorgular parametreli. Şablon içine değer yok.","ornek":null,"hafta":14,"tarih":"2027-01-18","tarihYazi":"18 Ocak 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":80,"konu":"Hata metninde sızıntı.","ozet":"Cevap, saldırgana yol göstermemelidir.","ayrinti":"Kullanıcı yok ile şifre yanlış aynı mesajdır. Ayrı mesaj, e-postanın kayıtlı olduğunu söyler. Postgres metni, dosya yolu, yığın izi cevapta yok. Logda var. 500 mesajı sabit cümledir.","uygulama":"Olmayan e-posta ve yanlış şifre için aynı 401 gövdesini test et.\nBir SQL hatasında cevap gövdesinde relation kelimesi olmadığını test et.","bitti":"İki giriş hatası aynı gövde. 500 gövdesinde tablo adı yok.","ornek":null,"hafta":14,"tarih":"2027-01-19","tarihYazi":"19 Ocak 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":81,"konu":"Hız sınırı, aynı hesap.","ozet":"Aynı hesabın sonsuz denemesi ucuz olmamalı.","ayrinti":"Giriş ucunda pencereli sayaç: 15 dakikada 10 deneme, fazlası 429. Sayaç e-posta artı IP olabilir. Yalnız IP, aynı ağdaki herkesi cezalandırır. Sayacı bellekte tutmak süreç yeniden başlayınca sıfırlar; bu seri için bugün kabul. Cevapta Retry-After koy.","uygulama":"Aynı e-posta ile 11 kez yanlış şifre dene.\n11. istek 429 olsun.\nBaşka e-posta hâlâ denenebilsin.","bitti":"Test bunu gösteriyor. Limit girişten başka ucu kilitlemiyor.","ornek":null,"hafta":14,"tarih":"2027-01-20","tarihYazi":"20 Ocak 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":82,"konu":"Yavaş gövde, timeout.","ozet":"Yavaş yavaş bayt gönderen istemci bağlantıyı tutar.","ayrinti":"Başlıklar gelip gövde gelmezse sunucu bekler. İstek zaman aşımı bunu keser. Veritabanı sorgusuna da statement_timeout koy, örneğin 2 saniye. Uzun export bu sınıra takılmasın diye o uçta ayrı, daha yüksek sınır olsun. Tek sayı her uca uymaz.","uygulama":"1 saniyede başlık gönderip gövdeyi tutan bir istemci yaz.\nSunucu bağlantıyı kessin.\nNormal not 2 saniye sınırının altında kalsın.","bitti":"Yavaş istemci düşüyor. Normal not 201.","ornek":null,"hafta":14,"tarih":"2027-01-21","tarihYazi":"21 Ocak 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":83,"konu":"Güvenlik başlıkları, sade set.","ozet":"Birkaç başlık, tarayıcıya kötü varsayılanı kapattırır.","ayrinti":"X-Content-Type-Options: nosniff. Referrer-Policy: no-referrer. Cache-Control: no-store not uçlarında, yoksa ortak önbellek başkasının notunu tutabilir. Helmet şart değil. Her başlığı neden koyduğunu bir satır yaz.","uygulama":"Bu üç başlığı middleware ile bas.\nGET /notes cevabında no-store olduğunu test et.\n/health için no-store şart değil.","bitti":"Test, not listesinde üç başlığı da görüyor.","ornek":null,"hafta":14,"tarih":"2027-01-22","tarihYazi":"22 Ocak 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":84,"konu":"Haftalık: kötü istekler testte reddedilir.","ozet":"Enjeksiyon, sızıntı, hız, yavaş gövde, başlık. Tek komut.","ayrinti":"Her biri ayrı test olsun. Birinin kırmızısı diğerini gizlemesin.","uygulama":"Beş testi yan yana koy.\nHepsi yeşil olsun.\nYeni kütüphane ekleme.","bitti":"Tek komut beş kötü isteği de reddediyor.","ornek":null,"hafta":14,"tarih":"2027-01-23","tarihYazi":"23 Ocak 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":85,"konu":"Neyi önbelleğe alırsın.","ozet":"Az değişen, pahalı okuma önbelleğe girer. Yazma girmez.","ayrinti":"Kullanıcının not listesi girebilir. Tek notun silme kararı giremez. Anahtar: userId, limit, cursor. Başkasının anahtarı olmaz. Önbellek süreç içi Map'tir. İkinci bir ürün yok. Doğruluk, hızdan önce gelir: emin değilsen önbelleğe koyma.","uygulama":"Liste fonksiyonunun üstüne Map koy.\nAynı anahtarla ikinci çağrı depoyu çağırmasın.\nBunu sayaçla test et.","bitti":"İkinci okuma depo sayacını artırmıyor. Anahtarda userId var.","ornek":null,"hafta":15,"tarih":"2027-01-25","tarihYazi":"25 Ocak 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":86,"konu":"TTL.","ozet":"Önbellekteki kayıt yaşlanır. Süre bitince depo yeniden okunur.","ayrinti":"TTL için saat fonksiyonunu parametre yap. Date.now'u içine gömersen test beklemek zorunda kalır. Kayıt { value, expiresAt }. Süre bugün 10 saniye. Test, saati 11 saniye ileri alır, depo yine çağrılır.","uygulama":"now fonksiyonunu depoya ve önbelleğe dışarıdan ver.\nTTL testini beklemeden yaz.\nSüre dolmadan depo bir kez, dolunca iki kez çağrılsın.","bitti":"Test saati oynatıyor. Gerçek 10 saniye beklemiyorsun.","ornek":null,"hafta":15,"tarih":"2027-01-26","tarihYazi":"26 Ocak 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":87,"konu":"Yazınca sil.","ozet":"Not eklenince o kullanıcının liste anahtarları düşer.","ayrinti":"Tek anahtarı silmek yetmez. limit ve cursor kombinasyonları duruyor olabilir. Kullanıcı önekine göre hepsini sil. Başka kullanıcının anahtarı durur. Silme unutulursa test, yeni notun listede olmadığını görür.","uygulama":"add ve remove sonrası o kullanıcının önbelleğini boşalt.\nBir test: listele, ekle, yine listele, yeni not görünsün.\nDiğer kullanıcının önbelleği aynı kalsın.","bitti":"Test yeşil. Yazma, yalnız sahibinin anahtarını siliyor.","ornek":null,"hafta":15,"tarih":"2027-01-27","tarihYazi":"27 Ocak 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":88,"konu":"Aynı anda dolan önbellek.","ozet":"On istek aynı anda kaçırırsa depo on kez okunur.","ayrinti":"İlk istek promise'i Map'e koyar, sonrakiler aynı promise'i bekler. Buna singleflight denir. Hata olursa promise'i Map'ten sil, yoksa hata da önbelleğe yapışır. Başarıda değeri TTL ile tut.","uygulama":"Yavaş depoya 10 paralel liste isteği at.\nDepo bir kez çağrılsın.\nHata olursa sonraki isteğin yeniden denediğini test et.","bitti":"İki test de yeşil: paylaşım ve hatayı yapıştırmama.","ornek":null,"hafta":15,"tarih":"2027-01-28","tarihYazi":"28 Ocak 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":89,"konu":"Eski veri, taze veri.","ozet":"Önbellek yalan söyleyebilir. Ne kadar yalan kabul, yazılı olsun.","ayrinti":"10 saniye içinde başka süreç not eklerse bu süreç göremez. Tek süreçlik Map, ikinci sunucuda ayrıdır. Bu seri tek süreç. Sınırı gün notuna yaz. Doğru olması şart olan uçta önbellek yok: silme yetkisi, giriş.","uygulama":"Hangi uçların önbellekli olduğunu listele.\nSilme ve giriş o listede olmasın.\nListe ucu olsun.","bitti":"Liste yazılı. Yetki ve giriş önbelleksiz.","ornek":null,"hafta":15,"tarih":"2027-01-29","tarihYazi":"29 Ocak 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":90,"konu":"Haftalık: liste önbelleği, yazınca düşer.","ozet":"Okuma ucuz, yazma doğruyu bozmuyor.","ayrinti":"Saat enjekte. Singleflight duruyor. Yeni ürün yok.","uygulama":"Haftalık test: iki kullanıcı, birinin yazısı diğerinin önbelleğini bozmasın, kendi listesi güncellensin, depo çağrısı ikinci okumada artmasın.","bitti":"Test yeşil. Önbellek yalnız listede.","ornek":null,"hafta":15,"tarih":"2027-01-30","tarihYazi":"30 Ocak 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":91,"konu":"İşi istekten ayırmak.","ozet":"Cevap, yavaş artçı işi beklemez.","ayrinti":"Not silinince bir artçı iş olsun: dışa aktarma kaydını temizlemek gibi, bugün konsola yazmak da yeter. İstek içinde await etme. İş kuyruğa yazılır, cevap döner. İş hiç çalışmazsa ne olacağını yaz: veri durur, artçı gecikir. Bu kabul mü, kâğıda yaz.","uygulama":"remove, bir iş satırı yazsın ve 204 dönsün.\nİş henüz çalışmasa da cevap gelsin.\nSüreyi, işi bekleyen haliyle karşılaştır, yaz.","bitti":"Cevap, artçı bitmeden dönüyor. Kabul cümlen yazılı.","ornek":null,"hafta":16,"tarih":"2027-02-01","tarihYazi":"1 Şubat 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":92,"konu":"İş tablosu, Postgres.","ozet":"Kuyruk bir tablodur. Redis yok.","ayrinti":"jobs(id, type, payload jsonb, run_at, attempts, locked_at, idempotency_key unique). payload içine bütün notu koyma, id koy. İşçi sonra notu okur. Tabloyu migration ile ekle.","uygulama":"004 migration jobs tablosunu kursun.\nSilme, bir satır eklesin.\nSatırı select ile gör.","bitti":"Silince jobs satırı var. Ayrı kuyruk ürünü yok.","ornek":null,"hafta":16,"tarih":"2027-02-02","tarihYazi":"2 Şubat 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":93,"konu":"İşçi döngüsü.","ozet":"İşçi, zamanı gelmiş işi kilitler, yapar, siler ya da bitti diye işaretler.","ayrinti":"Aynı işi iki işçi almasın: select ... for update skip locked. skip locked, kilitli satırı beklemeyip sonrakine geçer. İş bitince locked_at temizlenir veya satır silinir. İşçi bir setInterval değil, kısa uykuyla döner; süreyi gömme, parametre yap.","uygulama":"İşçi fonksiyonu bir tur atsın.\nİki paralel tur aynı işi almasın.\nBunu testte gör.","bitti":"Bir iş iki kez yan yana alınmıyor.","ornek":"select id\nfrom jobs\nwhere run_at \u003c= now()\n  and locked_at is null\norder by id\nfor update skip locked\nlimit 1","hafta":16,"tarih":"2027-02-03","tarihYazi":"3 Şubat 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":94,"konu":"Yeniden deneme, üst sınır.","ozet":"İş düşebilir. Sonsuz deneme kuyruğu zehirler.","ayrinti":"attempts bir artsın. Üst sınır 5. Sonra satır failed olsun, işçi onu almasın. Hemen yeniden denemek aynı hatayı yığar. run_at'i ileri al: 2, 4, 8 saniye. Saati yine parametre yap. Zehirli işi logla.","uygulama":"İş fonksiyonu iki kez hata versin, üçüncüde bitsin.\nattempts ve run_at buna uysun.\nBeş hatadan sonra bir daha alınmasın.","bitti":"Test saati ileri alınca deneme oluyor. Altıncı deneme yok.","ornek":null,"hafta":16,"tarih":"2027-02-04","tarihYazi":"4 Şubat 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":95,"konu":"İki kez çalışma.","ozet":"İş en az bir kez çalışır. Tam bir kez garanti değildir.","ayrinti":"İşçi işi yapıp işaretlemeden çökerse iş yeniden alınır. Artçı iş ikinci kez çalışınca zarar vermemeli. idempotency_key unique: note.deleted:\u003cid>. İkinci ekleme 23505, onu Conflict sayma, yut ve devam et. Anahtar yoksa iki satır aynı işi yapar.","uygulama":"Aynı not silmesini iki kez kuyruğa yaz.\nTek satır olsun.\nİşçiyi iki kez çalıştır, artçı etki bir kez sayılsın.","bitti":"jobs tablosunda tek satır. Artçı sayaç 1.","ornek":null,"hafta":16,"tarih":"2027-02-05","tarihYazi":"5 Şubat 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":96,"konu":"Haftalık: silmenin artçı işi bir kez etki eder.","ozet":"DELETE çabuk döner. Artçı iş tabloda durur, işçi bitirir.","ayrinti":"Yeni ürün yok. Saat ve depo testte sahte olabilir. Üretimde işçi sunucuyla aynı süreçte başlar, bugün bu kadar. Ayrı süreç haftaya değil, süreç haftasında ele alınır.","uygulama":"Film: not ekle, sil, cevap 204, jobs satırı var, işçi turu, artçı bitti, ikinci tur boş.\nBunu teste yaz.","bitti":"Film testi yeşil. Redis veya başka kuyruk yok.","ornek":null,"hafta":16,"tarih":"2027-02-06","tarihYazi":"6 Şubat 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":97,"konu":"JSON log.","ozet":"Bir olay, bir satır, sabit alanlar.","ayrinti":"time, level, msg, requestId. Alan eklemek serbest, alan adını değiştirmek değil. İki satırı gözle birleştirmek zorunda kalma. Hata nesnesini olduğu gibi basma; message ve code seç. Şifre alanı hâlâ yasak.","uygulama":"Log fonksiyonu nesne alsın, bir satır JSON bassın.\nTest, satırı parse edip alanlara baksın.\nŞifre anahtarı gelirse fonksiyon onu düşürsün ve bunu test et.","bitti":"Test parse ediyor. Şifre anahtarı çıktıda yok.","ornek":null,"hafta":17,"tarih":"2027-02-08","tarihYazi":"8 Şubat 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":98,"konu":"İstek kimliği.","ozet":"Bir isteğin bütün satırları aynı kimliği taşır.","ayrinti":"Gelen X-Request-Id varsa ve biçimi düzgünse onu kullan. Yoksa kendin üret. Cevap başlığına geri yaz. İş kuyruğa giderken aynı kimliği payload'a koy. Böylece artçı iş ile istek aynı izde buluşur. Kimliği kullanıcıdan gelen uzun metin yapma; uzunluk sınırı koy.","uygulama":"İki log satırı aynı requestId ile çıksın: giriş ve not ekleme.\nİş satırında da aynı kimlik olsun.\n1000 karakterlik başlık kabul edilmesin.","bitti":"Test, üç yerde aynı kimliği görüyor. Uzun başlık yok sayılıyor.","ornek":null,"hafta":17,"tarih":"2027-02-09","tarihYazi":"9 Şubat 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":99,"konu":"Süre alanı.","ozet":"Her cevapta işin kaç ms sürdüğü durur.","ayrinti":"process.hrtime.bigint başta ve sonda. Milisaniyeye çevir. Log alanı ms. Bunu console.time ile saçma. Tek yerde ölç, middleware'de. İşçi turunun süresi ayrı satırdır, istek satırına karışmaz.","uygulama":"Middleware süreyi yazsın.\nTest, logdaki ms alanının sayı olduğunu görsün.\nİşçi logu ayrı msg taşısın.","bitti":"İstek logunda ms var. İşçi logu ayrı.","ornek":null,"hafta":17,"tarih":"2027-02-10","tarihYazi":"10 Şubat 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":100,"konu":"Sağlık ve hazır ayrı.","ozet":"Süreç ayakta olabilir, iş kabul etmeyebilir.","ayrinti":"/health 200 ve veritabanına gitmez. /ready select 1. Hazır değilken yük dengeleyici bu sürece istek vermesin. Bugün dengeleyici yok; ucu doğru ayır. Kapanırken ready 503 dönsün, health 200 kalabilir.","uygulama":"Kapanış başlayınca ready 503 olsun.\nhealth 200 kalsın.\nBunu teste yaz.","bitti":"Test, kapanış bayrağını açınca iki ucu da doğru görüyor.","ornek":null,"hafta":17,"tarih":"2027-02-11","tarihYazi":"11 Şubat 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":101,"konu":"Sayaç.","ozet":"Kaç istek, kaçı 500, kaçı 429. Logdan saymak zorunda kalma.","ayrinti":"Bellekte basit sayaç yeter. GET /metrics düz metin olsun, gizli bilgi olmasın. Sayaç isimlerini bir kez koyunca değiştirme. Bugün: http_requests_total, http_errors_total, jobs_failed_total.","uygulama":"Üç sayacı artıran yerleri bağla.\nTest, bir 400'den sonra errors sayacının arttığını görsün.\n/metrics giriş istemesin ama dış dünyaya da açma kararını gün notuna yaz.","bitti":"Test sayacı görüyor. /metrics'te not metni yok.","ornek":null,"hafta":17,"tarih":"2027-02-12","tarihYazi":"12 Şubat 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":102,"konu":"Haftalık: bir isteğin izi logdan okunur.","ozet":"Kimlik, süre, sonuç aynı satırda. Artçı iş aynı kimlikte.","ayrinti":"Yeni araç yok. Dosyaya özel toplayıcı yok. stdout yeter.","uygulama":"Bir testi log dizisine yazdır.\nNot ekle, sil, işçiyi çalıştır.\nÜç satırda aynı requestId olsun.","bitti":"Test, üç satırı da aynı kimlikte görüyor.","ornek":null,"hafta":17,"tarih":"2027-02-13","tarihYazi":"13 Şubat 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":103,"konu":"SIGTERM.","ozet":"Kapatma isteği bir sinyaldir. process.exit ilk satır olmaz.","ayrinti":"SIGTERM gelince kapanış fonksiyonu bir kez çalışsın. İkinci sinyal beklemesin, yoksa asılı kalırsın; bir zaman aşımı koy, örneğin 10 saniye, sonra çık. SIGKILL beklemez, onu yakalayamazsın. Kodunu SIGTERM'e göre yaz.","uygulama":"Sunucuyu aç, SIGTERM gönder.\nKapanış logu bir kez basılsın.\n10 saniye aşılırsa çıktığını test etmek için süreyi testte kıs.","bitti":"Test, kapanışın bir kez çalıştığını ve sürecin bittiğini gösteriyor.","ornek":null,"hafta":18,"tarih":"2027-02-15","tarihYazi":"15 Şubat 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":104,"konu":"Açık isteği bitir.","ozet":"Kapanırken yeni istek alma. İçerideki isteği yarıda kesme.","ayrinti":"server.close yeni bağlantıyı reddeder, açık olanın bitmesini bekler. Hemen soketi kesmek yarım JSON bırakır. Test: yavaş bir istek sürerken kapat, o istek 200 bitsin, sonra gelen istek bağlanamasın.","uygulama":"Yavaş ucu 300 ms yap.\nİstek gidince kapat.\nO cevap 200 olsun.\nArdından yeni bağlantı düşsün.","bitti":"Test bu sırayı gösteriyor.","ornek":null,"hafta":18,"tarih":"2027-02-16","tarihYazi":"16 Şubat 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":105,"konu":"Havuzu kapat.","ozet":"Açık istek bitince havuz kapanır. Önce kapatırsan istek havasız kalır.","ayrinti":"Sıra: server.close, açık işler, pool.end, işçi dur, sonra süreç çıksın. pool.end bekleyen bağlantıyı da kapatır. Onu erken çağırırsan yavaş istek 500 olur.","uygulama":"Kapanış sırasını fonksiyona yaz.\nBilerek havuzu önce kapat, yavaş isteğin düştüğünü gör, sırayı düzelt.","bitti":"Doğru sırada yavaş istek 200. Havuz sonra kapanıyor.","ornek":null,"hafta":18,"tarih":"2027-02-17","tarihYazi":"17 Şubat 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":106,"konu":"İşçiyi durdur.","ozet":"Kapanırken işçi yeni iş almasın. Elindeki işi bitirsin.","ayrinti":"Bir bayrak: dur. Döngü yeni select atmasın. Kilitli iş varsa onu bitir veya kilidi bırak. Kilidi bırakmadan çıkarsan o iş locked_at ile askıda kalır. Açılışta eski kilitleri boşalt: locked_at belli süreden eskiyse null yap.","uygulama":"İşçi turunu yarıda kapat.\nYeni iş alınmasın.\nEski locked_at satırı açılışta serbest kalsın.\nBunu test et.","bitti":"Test: kapanışta yeni iş yok, eski kilit açılışta temiz.","ornek":null,"hafta":18,"tarih":"2027-02-18","tarihYazi":"18 Şubat 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":107,"konu":"Çökünce yeniden kalkma fikri.","ozet":"Süreç düşünce birisi yeniden açmalıdır. O birisi uygulamanın içi değildir.","ayrinti":"Uygulama kendi kendini sonsuz spawn etmesin. Dışarıda bir süreç yöneticisi veya compose restart yeter. Bugün compose'ta restart: unless-stopped koy. Çökme denemesi: bilerek throw eden bir uç açma; bunun yerine süreci SIGKILL ile öldür, kalktığını gör. SIGKILL'i kod yakalamaz.","uygulama":"compose restart kuralını yaz.\nSüreci öldür, yeniden kalktığını ve ready 200 olduğunu gör.\nBunu gün notuna yaz.","bitti":"Öldürünce süreç geri geliyor. Uygulama içinde kendi kendini doğuran kod yok.","ornek":null,"hafta":18,"tarih":"2027-02-19","tarihYazi":"19 Şubat 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":108,"konu":"Haftalık: kapanışta yarım yazı kalmaz.","ozet":"SIGTERM filmi: açık istek biter, işçi durur, havuz kapanır, veri bütün.","ayrinti":"Transaction içindeki yazı ya commit olmuştur ya olmamıştır. Kapanış onu yarıda bırakmaz. Bunu bir testle gör.","uygulama":"Bir not eklemesi sürerken SIGTERM.\nBitmişse satır var, bitmemişse yok.\nİkisi de kabul. Yarım satır yok.\njobs kilidi açılışta temiz.","bitti":"Test yeşil. Kapanış sırası gün notunda.","ornek":null,"hafta":18,"tarih":"2027-02-20","tarihYazi":"20 Şubat 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":109,"konu":"Her dış çağrıda süre sınırı.","ozet":"Depo, özet ve işçi sorgusu sonsuza kadar beklemez.","ayrinti":"AbortSignal.timeout veya sorguda statement_timeout. Süre bitince hata fırlasın, istek 503 olsun, süreç düşmesin. Her çağrıya aynı süreyi yapıştırma. Export uzun, giriş kısa.","uygulama":"Depo çağrısına 2 saniye koy.\nTestte depo hiç dönmesin, uç 503 olsun, /health ayakta kalsın.","bitti":"Test yeşil. Süre sabitleri tek dosyada.","ornek":null,"hafta":19,"tarih":"2027-02-22","tarihYazi":"22 Şubat 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":110,"konu":"Tekrarın zarar verdiği yer.","ozet":"Her hatayı yeniden deneme. Yazma iki kez olursa iki not olur.","ayrinti":"Yeniden deneme: bağlantı koptu, zaman aşımı. Deneme: 400, 403, 409. Onlar tekrar edince de düşer. POST /notes tekrarlanırsa ikinci not açılır. Bu yüzden istemci tekrar edecekse anahtar göndermelidir. İşçi zaten attempts sayar.","uygulama":"Hangi hataların deneneceğini bir fonksiyonla ayır.\n400 için tekrar yok.\nBağlantı hatası için en fazla 2 tekrar.\nBunu birim testle sabitle.","bitti":"Test, iki sınıfı da doğru ayırıyor.","ornek":null,"hafta":19,"tarih":"2027-02-23","tarihYazi":"23 Şubat 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":111,"konu":"Üst üste hata, kapıyı kısa kes.","ozet":"Depo üst üste düşüyorsa her isteği aynı süre bekletme.","ayrinti":"Beş hata olunca kapı 30 saniye kapalı olsun. O sırada depo çağrılmasın, 503 hemen gelsin. Süre bitince tek deneme. O da düşerse yine kapat. Buna devre kesici denir. Saati parametre yap.","uygulama":"Sahte depo beş kez düşsün.\nAltıncı istek depoya gitmesin.\nSaati 30 saniye ileri al, bir deneme gitsin.","bitti":"Üç adım da testte. Saati beklemiyorsun.","ornek":null,"hafta":19,"tarih":"2027-02-24","tarihYazi":"24 Şubat 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":112,"konu":"Aynı iş anahtarı.","ozet":"İstemci aynı POST'u iki kez gönderirse tek not oluşur.","ayrinti":"Başlık Idempotency-Key. İlk istek notu ve cevabı saklar. Aynı anahtar ve aynı kullanıcı, aynı cevabı alır, ikinci satır açmaz. Aynı anahtar başka gövdeyle gelirse 409. Anahtar 24 saat yaşasın. Bunu jobs ile karıştırma; bu, HTTP kapısının anahtarı.","uygulama":"Aynı anahtarla iki POST at.\nTek satır ve aynı id dönsün.\nAynı anahtar farklı metinle 409 olsun.","bitti":"İki test yeşil.","ornek":null,"hafta":19,"tarih":"2027-02-25","tarihYazi":"25 Şubat 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":113,"konu":"Yarım başarı.","ozet":"Satır yazıldı, cevap gidemedi. İstemci tekrarlar.","ayrinti":"Anahtar bu yüzden var. İşçi işi yaptı, silmeden çöktü, yine anahtar sayesinde ikinci etki yok. İkisini gün notunda ayır: HTTP anahtarı ve jobs anahtarı. Aynı kavram, iki kapı.","uygulama":"Cevabı bilerek yarıda kesen bir test düzeneği kurmana gerek yok.\nAynı anahtarın ikinci çağrıda depoyu yazmadığını sayaçla göster.\nİşçi için gün 95 testi hâlâ yeşil olsun.","bitti":"HTTP sayacı ikinci yazmada artmıyor. İşçi testi yeşil.","ornek":null,"hafta":19,"tarih":"2027-02-26","tarihYazi":"26 Şubat 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":114,"konu":"Haftalık: veritabanı gecikince API cevap verir.","ozet":"Depo yavaş veya kapalı. Süreç sağır kalmaz, hazır ucu 503 olur.","ayrinti":"Devre kesici, süre sınırı, sağlık ayrımı birlikte.","uygulama":"Film: depo zaman aşımı, not ucu 503, health 200, ready 503, beş hatadan sonra depo hiç çağrılmıyor, süre geçince tek deneme.","bitti":"Film testi yeşil.","ornek":null,"hafta":19,"tarih":"2027-02-27","tarihYazi":"27 Şubat 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":115,"konu":"Ölç, sonra değiştir.","ozet":"Hissiyat hız değildir. Önce sayı, sonra tek değişiklik.","ayrinti":"Bir ucu seç: GET /notes. 200 istek, eşzamanlılık 10. p50 ve en yavaşı yaz. Sonra tek şeyi değiştir, aynı ölçümü tekrarla. İki değişikliği birden yapma, hangisi etkiledi bilmezsin. Bugün yalnız ilk ölçüm.","uygulama":"Yük döngüsünü çalıştır.\nSayıları gün notuna yaz.\nKodu değiştirme.","bitti":"Sayılar yazılı. Bu günkü diff'te hız iddiası yok, yalnız ölçer.","ornek":null,"hafta":20,"tarih":"2027-03-01","tarihYazi":"1 Mart 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":116,"konu":"Kısa yük deneyi.","ozet":"Aynı ölçümü bir kez daha, tek değişiklikten sonra.","ayrinti":"Değişiklik olarak önbelleği aç veya kapat. Başka bir şeye dokunma. İki ölçüm yan yana. Fark yoksa bunu da yaz. Fark yoksa başarıdır, çünkü önbellek küçük veride görünmeyebilir.","uygulama":"Önbellek kapalı ve açık iki sayı.\nAynı istek sayısı.\nGün notunda tek cümlelik sonuç.","bitti":"İki ölçüm ve bir cümle var.","ornek":null,"hafta":20,"tarih":"2027-03-02","tarihYazi":"2 Mart 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":117,"konu":"Senkron şifre özeti döngüyü kilitler.","ozet":"Doğrulama sürerken sağlık ucu bekliyorsa özet senkron çalışıyordur.","ayrinti":"Bunu yeniden ölç. Async scrypt iken sağlık ucu kısa dönmeli. Sync bir yol kalmışsa bugün bitsin. Yük sayısıyla birlikte yaz.","uygulama":"Giriş yükü altında /health süresini ölç.\nSync çağrı araması yap: scryptSync kodda olmasın.","bitti":"Health, giriş yükü altında makul sürede. scryptSync yok.","ornek":null,"hafta":20,"tarih":"2027-03-03","tarihYazi":"3 Mart 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":118,"konu":"Havuz boyutu.","ozet":"Daha büyük havuz her zaman daha hızlı değildir.","ayrinti":"10 ve 2 ile aynı yükü ölç. 2 sıraya sokar. 10 yetiyorsa 30 yapma. Postgres max_connections sonludur; havuz onu aşarsa bağlantı reddedilir. Sayını yaz, boyutu gerekçeyle bırak.","uygulama":"İki havuz boyutu, iki ölçüm.\nSon boyutu kodda sabitle ve nedenini gün notuna yaz.","bitti":"Ölçüm ve gerekçe yazılı. Boyut ölçülmeden 100 değil.","ornek":null,"hafta":20,"tarih":"2027-03-04","tarihYazi":"4 Mart 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":119,"konu":"Gereksiz alan gönderme.","ozet":"Liste ucu, istemcinin kullanmadığı sütunu taşımasın.","ayrinti":"select * yerine id, text, created_at. user_id liste cevabında şart değil. Büyük metin bir gün eklense bile liste kısa kalsın. Ayrıntı ucu yoksa ekleme. Sözleşme değişir: fazla alan göndermeyi kesmek, istemci onu kullanıyorsa kırmadır. Bugün alan listesi kısa ve testli.","uygulama":"Cevap şeklini teste yaz: yalnız id, text, created_at.\nSorgu aynı sütunları seçsin.\nexplain şart değil, bugün şekil yeter.","bitti":"Test, ek alan olmadığını görüyor.","ornek":null,"hafta":20,"tarih":"2027-03-05","tarihYazi":"5 Mart 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":120,"konu":"Haftalık: bir ucun süre bütçesi yazılır.","ozet":"GET /notes için bir bütçe: bu makinede en yavaş istek şu ms'nin altında.","ayrinti":"Bütçe, başkasının makinesinden kopyalanmaz. Senin ölçümün. Testte flaky bir süre kilidi koyma. Bütçe gün notunda ve servis notunda durur.","uygulama":"Son ölçümü servis notuna yaz.\nHavuz boyutu, önbellek ve sütunlar o notta gerekçeli olsun.","bitti":"Servis notunda bütçe var. Süre testi yok, ölçüm notu var.","ornek":null,"hafta":20,"tarih":"2027-03-06","tarihYazi":"6 Mart 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":121,"konu":"Alan eklemek, alan silmek.","ozet":"Cevaba alan eklemek eski istemciyi bozmaz. Alan silmek veya adını değiştirmek bozar.","ayrinti":"text'i body yapmak istesen eski istemci düşer. Yeni alan noteText ekleyip text'i bir süre tutmak uyumlu yoldur. Bugün yeni bir alan ekle: createdAt, eskisi created_at ise istemciye camelCase ver, veritabanı snake_case kalsın. İkisini karıştırma.","uygulama":"Cevaba createdAt ekle.\ntext hâlâ orada olsun.\nEski testi, text ve id bekleyerek geçir.\nYeni test createdAt'e baksın.","bitti":"Eski alanlar duruyor. Yeni alan ekli. İsim dönüşümü tek yerde.","ornek":null,"hafta":21,"tarih":"2027-03-08","tarihYazi":"8 Mart 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":122,"konu":"Yol sürümü.","ozet":"Kıran değişiklik yeni yola gider. Eski yol bir süre durur.","ayrinti":"/v1/notes bugünkü sözleşmedir. /v2 açma, kıran bir değişikliğin yok. Yolu şimdiden /v1 yapmak, sonra kırmamak için yer açar. Yönlendirme: /notes, /v1/notes'a gitsin ki eski denemelerin kırılmasın.","uygulama":"Uçları /v1 altına al.\n/notes 307 veya uygulama içi aynı işleve gitsin.\nTestler /v1 kullansın.","bitti":"Testler /v1 ile yeşil. /notes hâlâ çalışıyor.","ornek":null,"hafta":21,"tarih":"2027-03-09","tarihYazi":"9 Mart 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":123,"konu":"Eski istemci.","ozet":"Eski istemci yeni zorunlu alanı bilmez.","ayrinti":"POST gövdesinde yalnız text yeter. createdAt istemciden gelirse reddet, onu sen üretirsin. İstemcinin verdiği id'yi kabul etme. Kabul edersen kimlik ve yetki karışır.","uygulama":"Gövdede id veya createdAt gelirse 400.\nYalnız text gelince 201.\nBunu test et.","bitti":"İki test yeşil.","ornek":null,"hafta":21,"tarih":"2027-03-10","tarihYazi":"10 Mart 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":124,"konu":"Kısa OpenAPI.","ozet":"Sözleşme, sohbetin içinde kalmasın. Kısa bir belge olsun.","ayrinti":"Bütün özel söz dizimine girme. Yollar, metodlar, gövde, cevap, hata kodları. Elle yaz. Üreteç bugün yok. Belge ile kod ayrılırsa belge yalan olur; yarın test onu tutacak.","uygulama":"openapi.yaml yaz: /v1/notes GET POST, DELETE, /v1/login, hata şekli.\nUzun açıklama yazma.","bitti":"Dosya yolların hepsini sayıyor. Kodda olup belgede olmayan uç kalmadı.","ornek":null,"hafta":21,"tarih":"2027-03-11","tarihYazi":"11 Mart 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":125,"konu":"Sözleşme testi.","ozet":"Cevap, belgedeki zorunlu alanları taşır. Fazla alan belgeye aykırıysa düşer.","ayrinti":"Bugün belgeye bakıp elle assert yazman yeter. id, text, createdAt zorunlu. Başka anahtar varsa test düşsün. Hata gövdesi error.code ve error.message. Bu test belgeden üretilmek zorunda değil.","uygulama":"Bir test GET cevabının anahtar kümesini birebir karşılaştırsın.\nBir test hata şeklini karşılaştırsın.","bitti":"İki test yeşil. Yeni alan ekleyince test düşünce belgeyi de güncelliyorsun.","ornek":null,"hafta":21,"tarih":"2027-03-12","tarihYazi":"12 Mart 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":126,"konu":"Haftalık: sürüm bir donar.","ozet":"/v1 sözleşmesi bu hafta kilitlenir. Değişiklik ya uyumludur ya da yeni sürüm ister.","ayrinti":"Belge, test ve kod aynı şekli söyler.","uygulama":"Uç listesini belgeden, testten ve routes'tan yaz.\nÜç liste aynı olsun.\nBunu gün notuna koy.","bitti":"Üç liste aynı. /v1 dışında gizli uç yok.","ornek":null,"hafta":21,"tarih":"2027-03-13","tarihYazi":"13 Mart 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":127,"konu":"ILIKE ve sınırı.","ozet":"Ortadan arama, sıradan indeks kullanamaz.","ayrinti":"where text ilike '%' || $1 || '%' küçük tabloda olur. Büyüyünce seq scan görürsün. Bugün bunu explain ile gör ve kabul et. Ayrı bir arama motoru ekleme. Sorgu parametresi q. Boş q, filtresiz sayfadır. % ve _ karakterini kullanıcının jokerine bırakma; kaçışla.","uygulama":"q ile arama yap.\n% karakterini kaçır.\nexplain çıktısını gün notuna koy.\nYeni arama ürünü kurma.","bitti":"Test: % araması joker gibi bütün tabloyu döndürmüyor. explain notu duruyor.","ornek":null,"hafta":22,"tarih":"2027-03-15","tarihYazi":"15 Mart 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":128,"konu":"Kararlı sıralama.","ozet":"Aynı anda yazılmış iki notun sırası her okumada aynıdır.","ayrinti":"order by created_at desc, id desc. Yalnız created_at, eşit zamanda sırayı değiştirir, sayfa tekrar eder veya atlar. İmleç de bu sıraya uymalı. Yalnız id ile sayfalıyorsan created_at sırası ile çelişme.","uygulama":"Aynı milisaniyede iki not ekle.\nListe sırası iki okumada aynı olsun.\nSayfa bunu bölerken not kaybolmasın.","bitti":"Test, tekrar ve kayıp olmadığını gösteriyor.","ornek":null,"hafta":22,"tarih":"2027-03-16","tarihYazi":"16 Mart 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":129,"konu":"Yumuşak silme.","ozet":"Silinen satır tabloda kalır, listede görünmez.","ayrinti":"deleted_at null ise yaşıyor. Liste where deleted_at is null. DELETE bunu set eder. Geri alma bugün yok. Unique kurallar yumuşak silineni de tutar; aynı metin yeniden eklenebilir, metin unique değil. İşçi artçı işi yumuşak silmede de bir kez çalışır.","uygulama":"Migration deleted_at eklesin.\nSilinen not listede olmasın, tabloda olsun.\nExport da onu yazmasın.","bitti":"Üç test: liste, tablo, export.","ornek":null,"hafta":22,"tarih":"2027-03-17","tarihYazi":"17 Mart 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":130,"konu":"Kim ne zaman değiştirdi.","ozet":"Denetim izi, notun kendisinden ayrı bir tablodur.","ayrinti":"note_events(id, note_id, user_id, action, at). action: created, deleted. Metnin tamamını iz tablosuna kopyalama. İz, iş kuralının transaction'ında yazılsın. İz yazılmazsa not da commit olmasın.","uygulama":"Ekleme ve silme tek transaction'da iz bıraksın.\nİz yazımı hata verirse not da kalmasın.\nKullanıcı kendi izini okusun, başkasını okumasın.","bitti":"İki test: iz var, iz düşünce not yok. Yetki duruyor.","ornek":null,"hafta":22,"tarih":"2027-03-18","tarihYazi":"18 Mart 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":131,"konu":"Dışa aktarma kuyrukta.","ozet":"Export isteği dosyayı hemen üretmez. İş bırakır, cevap 202 döner.","ayrinti":"202 kabul edildi, iş bitmedi demektir. İşçi satırları yazar. Bittiğini görmek için GET /v1/exports/:id. Büyük liste istek içinde üretilmez. Eski anlık export'u kaldırmak kıran değişikliktir; /v1 içindeysen belgeyi ve testi birlikte güncelle.","uygulama":"POST /v1/exports 202 ve bir id dönsün.\nİşçi bitirince GET o kaydı hazır görsün.\nBaşkasının export kaydı 403 olsun.","bitti":"Üç adım testte. İstek, export bitene kadar beklemiyor.","ornek":null,"hafta":22,"tarih":"2027-03-19","tarihYazi":"19 Mart 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":132,"konu":"Haftalık: arama ve yumuşak silme.","ozet":"Arama, sayfa, yumuşak silme, iz ve kuyrukta export aynı serviste.","ayrinti":"Yeni ürün yok. Sözleşme testi güncel.","uygulama":"Film: not ekle, ara, sil, listede yok, izde deleted var, export işi onu içermiyor.","bitti":"Film testi yeşil. Belge bu uçları sayıyor.","ornek":null,"hafta":22,"tarih":"2027-03-20","tarihYazi":"20 Mart 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":133,"konu":"Ortamlar.","ozet":"Geliştirme, test ve üretim aynı kodu farklı değişkenle çalıştırır.","ayrinti":"NODE_ENV tek başına yeter sanma. Asıl fark DATABASE_URL ve çerez Secure bayrağıdır. Test veritabanı geliştirme veritabanı olmasın. Bir testi yanlışlıkla geliştirme verisine yazmayı açılış kontrolüyle engelle: test komutu test adlı veritabanı istiyorsa ona bak.","uygulama":"Üç örnek ortam dosyası yaz, sır olmadan.\nTest komutu, veritabanı adında test yoksa açılmasın.","bitti":"Yanlış veritabanı adıyla test açılmıyor. Üç örnek dosya duruyor.","ornek":null,"hafta":23,"tarih":"2027-03-22","tarihYazi":"22 Mart 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":134,"konu":"Sır ortamda.","ozet":"Şifre, oturum sırrı ve veritabanı adresi imajın içinde değildir.","ayrinti":"Kodda ve compose dosyasında düz şifre araması yap. Varsa çıkar. Örnek dosyada changeme gibi yer tutucu olabilir, gerçek olmasın. Gün notuna: sır tablete kopyalanmaz.","uygulama":"Depoda gizli dize arayan kısa bir test veya komut yaz.\nÖrnek dosyalar temiz olsun.\nGerçek .env git durumunda görünmesin.","bitti":"Arama temiz. git status .env göstermiyor.","ornek":null,"hafta":23,"tarih":"2027-03-23","tarihYazi":"23 Mart 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":135,"konu":"İmaj, root değil.","ozet":"Uygulama konteyneri root kullanıcısıyla çalışmaz.","ayrinti":"Dockerfile: Node 20, üretim bağımlılıkları, USER node. Geliştirme aracını imaja koyma. .env kopyalama. Sağlık kontrolü /health. İmajı her seferinde latest diye ezme; bugün yerel etiket yeter.","uygulama":"Dockerfile yaz.\nİmajı kur.\nİçerde whoami node olsun.\nUygulama o imajda /health versin.","bitti":"whoami node. /health 200. İmajda .env yok.","ornek":null,"hafta":23,"tarih":"2027-03-24","tarihYazi":"24 Mart 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":136,"konu":"Tek komut.","ozet":"compose up servisi ve veritabanını kaldırır. Migration açılışta uygulanır.","ayrinti":"İnsan adımı kaldıysa komut değildir. Açılış migration'ı iki süreç aynı anda basarsa çakışır. Tek süreçlik bu seride açılışta uygulamak kabul. İki süreç olursa kilit gerekir; bunu gün notuna sınır olarak yaz.","uygulama":"Temiz volume ile docker compose up.\nMigration kendiliğinden basılsın.\nİkinci kez up, migration'ı tekrar basmasın.","bitti":"İki kalkış da çalışıyor. İkinci kalkış eski migration'ı yeniden yazmıyor.","ornek":null,"hafta":23,"tarih":"2027-03-25","tarihYazi":"25 Mart 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":137,"konu":"Duman testi.","ozet":"Kalkan servise dışarıdan üç istek. Testin içi değil, ayakta mı diye.","ayrinti":"/health 200, /ready 200, /v1/login bozuk gövdeyle 400 veya 401. 500 görürsen duman kırmızıdır. Duman, birim testin yerine geçmez.","uygulama":"Küçük bir node dosyası bu üç isteği atsın.\nBiri 500 ise çıkış kodu 1 olsun.\nKomutu npm script yap.","bitti":"Komut yeşil. Bilerek ready bozulunca komut kırmızı.","ornek":null,"hafta":23,"tarih":"2027-03-26","tarihYazi":"26 Mart 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":138,"konu":"Haftalık: temiz makinede servis ayakta.","ozet":"Volume yok, imaj var, tek komut, duman yeşil.","ayrinti":"Tablet bu işi çalıştırmaz. Node'un ve Docker'ın olduğu yerde çalışır. Sen komutları tabletteki sayfadan okursun.","uygulama":"Volume sil.\ncompose up.\nDuman testi.\nSonucu gün notuna yaz.","bitti":"Duman yeşil. Kurulum adımı üç satırı geçmiyor.","ornek":null,"hafta":23,"tarih":"2027-03-27","tarihYazi":"27 Mart 2027 cumartesi","haftaninGunu":6,"birlestirme":true},{"n":139,"konu":"Bir isteği olay döngüsünde anlat.","ozet":"GET /v1/notes geldiğinde süreç ne yapar, sırayla.","ayrinti":"Kabul, senkron middleware, await depo, microtask, cevap, log. Uzun senkron iş yok. Bunu ezber cümle değil, kendi koduna bakarak yaz.","uygulama":"Kendi kodundan sekiz satırlık bir sıra yaz.\nHangi satırın await olduğunu işaretle.\nYanına, o await sırasında başka isteğin girebildiğini bir cümleyle ekle.","bitti":"Sekiz satır gün notunda ve kodla uyumlu.","ornek":null,"hafta":24,"tarih":"2027-03-29","tarihYazi":"29 Mart 2027 pazartesi","haftaninGunu":1,"birlestirme":false},{"n":140,"konu":"Transaction'ı bilerek boz.","ozet":"İz yazımı düşünce not da kalmaz. Bunu yeniden gör.","ayrinti":"Hafıza tazelemek için testi kapat, boz, kırmızı gör, aç. Yeni özellik yok.","uygulama":"note_events insert'ini geçici olarak hata versin.\nNotun da rollback olduğunu gör.\nSonra hatayı kaldır, test yeşil kalsın.","bitti":"Kırmızı hali gördün. Bıraktığın kod yeşil.","ornek":null,"hafta":24,"tarih":"2027-03-30","tarihYazi":"30 Mart 2027 salı","haftaninGunu":2,"birlestirme":false},{"n":141,"konu":"Başkasının notunu silmeyi kapat.","ozet":"Yetki deliği varsa bugün kapanır.","ayrinti":"İki kullanıcı. Biri diğerinin id'sini DELETE eder. 403 ve satır durur. Liste, arama, export, iz. Dört kapıda da sızıntı yok.","uygulama":"Dört testi yan yana çalıştır.\nBiri kırmızıysa düzelt.\nSorguda user_id şartını tekrar oku.","bitti":"Dört test yeşil.","ornek":null,"hafta":24,"tarih":"2027-03-31","tarihYazi":"31 Mart 2027 çarşamba","haftaninGunu":3,"birlestirme":false},{"n":142,"konu":"İşi iki kez çalıştır.","ozet":"Aynı artçı iş ikinci kez etki etmez.","ayrinti":"İşçiyi bilerek iki tur çağır. Sayaç bir. Anahtar unique. Bunu kapak haftasında yeniden gör, çünkü üretimde çökme budur.","uygulama":"Testi çalıştır.\nAnahtarı kaldırınca sayacın ikiye çıktığını gör, anahtarı geri koy.","bitti":"Anahtarlı hali yeşil. Anahtarsız hali neden kırmızı, bir cümle yazılı.","ornek":null,"hafta":24,"tarih":"2027-04-01","tarihYazi":"1 Nisan 2027 perşembe","haftaninGunu":4,"birlestirme":false},{"n":143,"konu":"Yük sayısı.","ozet":"Son bir ölçüm. Bütçeyle karşılaştır.","ayrinti":"Aynı istek sayısı, aynı eşzamanlılık. Sayı bütçenin üstündeyse sebebi uydurma, bir cümleyle ne gördüğünü yaz. Bugün onu optimize etme turuna çevirme. Ölçüm dürüst olsun.","uygulama":"GET /v1/notes yükünü tekrar çalıştır.\nGün 120 bütçesinin yanına bugünkü sayıyı yaz.","bitti":"İki sayı yan yana. Aradaki fark için bir cümle var.","ornek":null,"hafta":24,"tarih":"2027-04-02","tarihYazi":"2 Nisan 2027 cuma","haftaninGunu":5,"birlestirme":false},{"n":144,"konu":"Haftalık: servisi baştan sona anlat.","ozet":"Tek sayfa. Başkası bu sayfayla servisi ayağa kaldırır ve nerede ne olduğunu görür.","ayrinti":"Sayfada: ne işe yarar, nasıl kalkar, /v1 uçları, hata şekli, olay döngüsünde bir istek, transaction, yetki, kuyruk, önbellek sınırı, yük sayısı. Yeni özellik yok. Bu sayfa kodun yerine geçmez, kapıdır.","uygulama":"SERVİS.md yaz.\nDuman testini o sayfadaki komutla çalıştır.\nSayfa üç ekranı geçmesin; tabletten okunacak.","bitti":"SERVİS.md duruyor. İçindeki komut duman testini geçiriyor. Yeni çerçeve yok.","ornek":null,"hafta":24,"tarih":"2027-04-03","tarihYazi":"3 Nisan 2027 cumartesi","haftaninGunu":6,"birlestirme":true}]};
+  </script>
+  <script>
+(function () {
+  const seri = globalThis.SERI;
+  if (!seri) {
+    document.body.textContent = "Müfredat yüklenmedi.";
+    return;
+  }
+
+  const BITTI = "js-seri-bitti";
+  const TEMA = "js-seri-tema";
+  const SAAT = "js-seri-saat";
+  const ekran = document.querySelector("#ekran");
+  const baslik = document.querySelector("#baslik");
+  const nav = document.querySelector(".alt");
+
+  const tema = localStorage.getItem(TEMA) || "sistem";
+  document.documentElement.dataset.tema = tema;
+
+  function esc(value) {
+    return String(value).replace(/[&<>"']/g, (ch) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[ch]);
+  }
+
+  function yerelIso(date = new Date()) {
+    const kaydir = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return kaydir.toISOString().slice(0, 10);
+  }
+
+  function bittiOku() {
+    try {
+      return JSON.parse(localStorage.getItem(BITTI) || "{}");
+    } catch {
+      return {};
+    }
+  }
+
+  function bittiYaz(map) {
+    localStorage.setItem(BITTI, JSON.stringify(map));
+  }
+
+  function saatBaslangic() {
+    return {
+      faz: 0,
+      kalanMs: seri.bloklar[0].dk * 60000,
+      calisiyor: false,
+      bitis: null,
+      bitti: false,
+    };
+  }
+
+  function saatOku() {
+    try {
+      const ham = JSON.parse(sessionStorage.getItem(SAAT) || "null");
+      if (!ham || !Number.isFinite(ham.faz)) return saatBaslangic();
+      return ham;
+    } catch {
+      return saatBaslangic();
+    }
+  }
+
+  function saatYaz(saat) {
+    sessionStorage.setItem(SAAT, JSON.stringify(saat));
+  }
+
+  function tick() {
+    const saat = saatOku();
+    if (!saat.calisiyor || saat.bitti) return saat;
+    let kalan = saat.bitis - Date.now();
+    let faz = saat.faz;
+    let titret = false;
+    while (kalan <= 0 && faz < seri.bloklar.length - 1) {
+      faz += 1;
+      kalan += seri.bloklar[faz].dk * 60000;
+      titret = true;
+    }
+    if (titret && navigator.vibrate) navigator.vibrate(40);
+    if (kalan <= 0) {
+      const bitti = { faz: seri.bloklar.length - 1, kalanMs: 0, calisiyor: false, bitis: null, bitti: true };
+      saatYaz(bitti);
+      return bitti;
+    }
+    const sonraki = { faz, kalanMs: kalan, calisiyor: true, bitis: Date.now() + kalan, bitti: false };
+    saatYaz(sonraki);
+    return sonraki;
+  }
+
+  function sureYazi(ms) {
+    const toplam = Math.max(0, Math.ceil(ms / 1000));
+    const dakika = String(Math.floor(toplam / 60)).padStart(2, "0");
+    const saniye = String(toplam % 60).padStart(2, "0");
+    return `${dakika}:${saniye}`;
+  }
+
+  function bugun() {
+    return yerelIso();
+  }
+
+  function gunBul(n) {
+    return seri.gunler.find((gun) => gun.n === Number(n));
+  }
+
+  function takvimGunu() {
+    return seri.gunler.find((gun) => gun.tarih === bugun()) || null;
+  }
+
+  function seciliNo() {
+    const hash = location.hash;
+    const ders = hash.match(/^#\/ders\/(\d+)$/);
+    if (ders) return Number(ders[1]);
+    const takvim = takvimGunu();
+    if (takvim) return takvim.n;
+    if (bugun() > seri.meta.bitis) return 144;
+    return 1;
+  }
+
+  function durum(gun) {
+    if (bittiOku()[gun.n]) return "bitti";
+    if (gun.tarih === bugun()) return "bugun";
+    if (gun.tarih < bugun()) return "kacti";
+    return "gelecek";
+  }
+
+  function durumYazi(kod) {
+    if (kod === "bitti") return "bitti";
+    if (kod === "bugun") return "bugün";
+    if (kod === "kacti") return "kaçtı";
+    return "";
+  }
+
+  function paragraflar(metin) {
+    return metin
+      .split(/\n+/)
+      .filter((satir) => satir.trim())
+      .map((satir) => `<p>${esc(satir)}</p>`)
+      .join("");
+  }
+
+  function saatKutusu() {
+    const saat = tick();
+    const blok = seri.bloklar[saat.faz];
+    const etiket = saat.bitti ? `${seri.meta.gunlukSaat} saat doldu` : blok.ad;
+    const yazi = saat.bitti ? "Günün süresi bitti. Bitiş şartına bak." : blok.yazi;
+    const dugme = saat.calisiyor ? "Duraklat" : "Başlat";
+    return `<section class="saat" aria-label="Günün süresi">
+      <div class="saat-ust">
+        <p class="faz" data-faz>${esc(etiket)}</p>
+        <p class="sure" data-sure>${sureYazi(saat.kalanMs)}</p>
+      </div>
+      <p class="faz-yazi" data-faz-yazi>${esc(yazi)}</p>
+      <div class="saat-dugmeler">
+        <button type="button" data-eylem="baslat" data-baslat>${dugme}</button>
+        <button type="button" data-eylem="sifirla" class="ikincil">Sıfırla</button>
+      </div>
+    </section>`;
+  }
+
+  function sayilar() {
+    const meta = seri.meta;
+    return `<dl class="sayilar">
+      <div><dt>Günde</dt><dd>${meta.gunlukSaat} saat</dd></div>
+      <div><dt>Bitiş</dt><dd>3 Nisan 2027</dd></div>
+      <div><dt>Toplam</dt><dd>${meta.toplamSaat} saat</dd></div>
+    </dl>
+    <p class="genis">${esc(meta.baslangicYazi)} başlar. ${esc(meta.bitisYazi)} biter. 24 hafta, 144 gün. Pazartesi–cumartesi, pazar yok.</p>`;
+  }
+
+  function ekranBugun() {
+    const iso = bugun();
+    const meta = seri.meta;
+    baslik.textContent = "Bugün";
+    if (iso < meta.baslangic) {
+      ekran.innerHTML = `${sayilar()}
+        <p>Takvim ${esc(meta.baslangicYazi)} işler. İstersen gün 1'i bugünden oku. Kaçırılan gün, başlayınca üst üste binmez.</p>
+        <button type="button" class="tam" data-eylem="gun" data-n="1">Gün 1'i aç</button>
+        <h2>İlk hafta</h2>
+        ${haftaListesi(1)}`;
+      return;
+    }
+    if (iso > meta.bitis) {
+      const sayi = Object.keys(bittiOku()).length;
+      ekran.innerHTML = `${sayilar()}
+        <p>Seri bitti. İşaretlediğin gün: ${sayi} / 144.</p>
+        <button type="button" class="tam" data-eylem="gun" data-n="144">Son günü aç</button>`;
+      return;
+    }
+    const gun = takvimGunu();
+    if (!gun) {
+      const yarin = seri.gunler.find((aday) => aday.tarih > iso);
+      baslik.textContent = "Pazar";
+      ekran.innerHTML = `<p>Bugün pazar. Seri durur.</p>
+        <p>Yarın gün ${yarin.n}: ${esc(yarin.konu)}</p>
+        <button type="button" class="tam" data-eylem="gun" data-n="${yarin.n}">Yarının dersini aç</button>`;
+      return;
+    }
+    const kac = seri.gunler.filter((aday) => durum(aday) === "kacti").length;
+    const kacYazi = kac ? `<p class="kacak">${kac} gün kaçtı. Ekleme. Bugünün konusu aşağıda.</p>` : "";
+    ekran.innerHTML = `${saatKutusu()}
+      <p class="kicker">Gün ${gun.n} · Hafta ${gun.hafta} · ${esc(gun.tarihYazi)}</p>
+      <h2>${esc(gun.konu)}</h2>
+      ${kacYazi}
+      ${paragraflar(gun.ozet)}
+      <button type="button" class="tam" data-eylem="gun" data-n="${gun.n}">Dersin tamamı</button>`;
+  }
+
+  function ekranDers(n) {
+    const gun = gunBul(n) || gunBul(1);
+    const hafta = seri.haftalar[gun.hafta - 1];
+    const kod = durum(gun);
+    baslik.textContent = `Gün ${gun.n}`;
+    const ornek = gun.ornek ? `<h2>Kısa örnek</h2><pre>${esc(gun.ornek)}</pre>` : "";
+    const onceki = gun.n > 1 ? `<button type="button" data-eylem="gun" data-n="${gun.n - 1}">Önceki</button>` : "";
+    const sonraki = gun.n < 144 ? `<button type="button" data-eylem="gun" data-n="${gun.n + 1}">Sonraki</button>` : "";
+    const bitti = kod === "bitti";
+    ekran.innerHTML = `${saatKutusu()}
+      <p class="kicker">Hafta ${hafta.n} · ${esc(hafta.ad)} · ${esc(gun.tarihYazi)}</p>
+      <h2>${esc(gun.konu)}</h2>
+      <p class="durum ${kod}">${durumYazi(kod)}</p>
+      <h2>Kavram</h2>
+      ${paragraflar(gun.ozet)}
+      ${paragraflar(gun.ayrinti)}
+      ${ornek}
+      <h2>Uygulama</h2>
+      ${paragraflar(gun.uygulama)}
+      <h2>Nereye</h2>
+      <p>Bu sayfa ders içindir. Kodu buraya yazma.</p>
+      ${gun.n === 1
+        ? `<p>Dosya <code>src/day-01/notes.js</code>. Üç fonksiyonun içindeki <code>throw</code> satırını sil, yerine kendi kodunu yaz. <code>src/day-01/notes.test.js</code> dosyasına dokunma.</p>`
+        : `<p>Dosya yolu yukarıdaki uygulamada yazar. Test dosyasına dokunma.</p>`}
+      <p>Dosyayı sen açma. Kodu bu sohbete yaz. Ben dosyaya koyup testi çalıştırırım. Gün 1 komutu <code>npm run day</code>.</p>
+      <h2>Bitti sayılır</h2>
+      <p>${esc(gun.bitti)}</p>
+      <button type="button" class="tam" data-eylem="bitti" data-n="${gun.n}">${bitti ? "İşareti kaldır" : "Bugün bitti"}</button>
+      <div class="yan">${onceki}${sonraki}</div>`;
+  }
+
+  function haftaListesi(haftaNo) {
+    const hafta = seri.haftalar[haftaNo - 1];
+    const maddeler = hafta.gunler
+      .map((n) => {
+        const gun = gunBul(n);
+        const kod = durum(gun);
+        return `<li>
+          <button type="button" data-eylem="gun" data-n="${gun.n}">
+            <span class="gun-no">${gun.haftaninGunu}</span>
+            <span class="gun-konu">${esc(gun.konu)}</span>
+            <span class="durum ${kod}">${durumYazi(kod)}</span>
+          </button>
+        </li>`;
+      })
+      .join("");
+    return `<p>${esc(hafta.amac)}</p><ol class="gunler">${maddeler}</ol>`;
+  }
+
+  function ekranMufredat() {
+    baslik.textContent = "Müfredat";
+    const sayi = Object.keys(bittiOku()).length;
+    const acik = takvimGunu()?.hafta || 1;
+    const bloklar = seri.haftalar
+      .map((hafta) => {
+        const ac = hafta.n === acik ? " open" : "";
+        return `<details${ac}>
+          <summary>
+            <span>Hafta ${hafta.n}</span>
+            <strong>${esc(hafta.ad)}</strong>
+            <span class="ozet-tarih">${esc(hafta.baslangicYazi)}</span>
+          </summary>
+          ${haftaListesi(hafta.n)}
+        </details>`;
+      })
+      .join("");
+    ekran.innerHTML = `<p>${sayi} / 144 işaretli. ${esc(seri.meta.baslangicYazi)} – ${esc(seri.meta.bitisYazi)}.</p>
+      <div class="cubuk" aria-hidden="true"><span style="width:${(sayi / 144) * 100}%"></span></div>
+      <div class="haftalar">${bloklar}</div>`;
+  }
+
+  function ekranDuzen() {
+    baslik.textContent = "Düzen";
+    const temaSimdi = document.documentElement.dataset.tema;
+    ekran.innerHTML = `${sayilar()}
+      <h2>İki saat nasıl bölünür</h2>
+      <ol class="bloklar">
+        ${seri.bloklar
+          .map((blok) => `<li><strong>${blok.dk} dk</strong> ${esc(blok.ad)}. ${esc(blok.yazi)}</li>`)
+          .join("")}
+      </ol>
+      <h2>Tablet</h2>
+      <p>Sayfayı dikey tut. Satır kısa kalsın.</p>
+      <p>Kod bloğu 70 dakikadır. Cam klavye yetmez. Bluetooth klavye bağla.</p>
+      <p>Kod <code>src/day-01/notes.js</code> ile başlar. Sonraki günlerin dosyası, o günün uygulama bölümünde yazar. Test dosyasına dokunma.</p>
+      <p>Dosyayı sen açma. Kodu sohbete yaz. Ben ilgili dosyaya koyup o günün testini çalıştırırım.</p>
+      <p>Docker 32. günde, Node'un çalıştığı yerdedir. Tablete Docker kurma.</p>
+      <h2>Kaçırılan gün</h2>
+      <p>Ertelenmez. Ertesi gün bir sonraki konudur. Aynı günü iki kez yapmak serbest; sıradaki günü biriktirmek değil.</p>
+      <h2>İşaret</h2>
+      <p>Bitti işareti bu tarayıcıda durur. Başka cihaza geçmez. Çözüm depoda yok. Bitiş şartı sözleşmedir.</p>
+      <h2>Görünüm</h2>
+      <div class="yan">
+        <button type="button" data-eylem="tema" data-tema="acik" ${temaSimdi === "acik" ? "aria-pressed=\"true\"" : ""}>Açık</button>
+        <button type="button" data-eylem="tema" data-tema="koyu" ${temaSimdi === "koyu" ? "aria-pressed=\"true\"" : ""}>Koyu</button>
+        <button type="button" data-eylem="tema" data-tema="sistem" ${temaSimdi === "sistem" ? "aria-pressed=\"true\"" : ""}>Sistem</button>
+      </div>`;
+  }
+
+  function ciz() {
+    const hash = location.hash || "#/bugun";
+    const ders = hash.match(/^#\/ders\/(\d+)$/);
+    let bolum = "bugun";
+    if (ders) {
+      bolum = "ders";
+      ekranDers(ders[1]);
+    } else if (hash.startsWith("#/mufredat")) {
+      bolum = "mufredat";
+      ekranMufredat();
+    } else if (hash.startsWith("#/duzen")) {
+      bolum = "duzen";
+      ekranDuzen();
+    } else if (hash.startsWith("#/ders")) {
+      bolum = "ders";
+      ekranDers(seciliNo());
+    } else {
+      ekranBugun();
+    }
+    for (const dugme of nav.querySelectorAll("button")) {
+      dugme.setAttribute("aria-current", dugme.dataset.git === bolum ? "page" : "false");
+    }
+    saatCiz();
+    baslik.focus({ preventScroll: true });
+  }
+
+  function saatCiz() {
+    const saat = tick();
+    const sure = ekran.querySelector("[data-sure]");
+    if (!sure) return;
+    const blok = seri.bloklar[saat.faz];
+    sure.textContent = sureYazi(saat.kalanMs);
+    ekran.querySelector("[data-faz]").textContent = saat.bitti ? `${seri.meta.gunlukSaat} saat doldu` : blok.ad;
+    ekran.querySelector("[data-faz-yazi]").textContent = saat.bitti
+      ? "Günün süresi bitti. Bitiş şartına bak."
+      : blok.yazi;
+    ekran.querySelector("[data-baslat]").textContent = saat.calisiyor ? "Duraklat" : "Başlat";
+  }
+
+  nav.addEventListener("click", (event) => {
+    const git = event.target.closest("button")?.dataset.git;
+    if (!git) return;
+    if (git === "ders") {
+      location.hash = `#/ders/${seciliNo()}`;
+      return;
+    }
+    location.hash = `#/${git}`;
+  });
+
+  document.body.addEventListener("click", (event) => {
+    const hedef = event.target.closest("[data-eylem]");
+    if (!hedef) return;
+    const eylem = hedef.dataset.eylem;
+    if (eylem === "gun") {
+      location.hash = `#/ders/${hedef.dataset.n}`;
+      return;
+    }
+    if (eylem === "baslat") {
+      const saat = tick();
+      if (saat.bitti) return;
+      if (saat.calisiyor) {
+        saatYaz({
+          faz: saat.faz,
+          kalanMs: Math.max(0, saat.bitis - Date.now()),
+          calisiyor: false,
+          bitis: null,
+          bitti: false,
+        });
+      } else {
+        saatYaz({
+          faz: saat.faz,
+          kalanMs: saat.kalanMs,
+          calisiyor: true,
+          bitis: Date.now() + saat.kalanMs,
+          bitti: false,
+        });
+      }
+      saatCiz();
+      return;
+    }
+    if (eylem === "sifirla") {
+      if (!window.confirm("Süreyi başa almak istiyor musun?")) return;
+      saatYaz(saatBaslangic());
+      saatCiz();
+      return;
+    }
+    if (eylem === "bitti") {
+      const map = bittiOku();
+      const n = String(hedef.dataset.n);
+      if (map[n]) delete map[n];
+      else map[n] = bugun();
+      bittiYaz(map);
+      ciz();
+      return;
+    }
+    if (eylem === "tema") {
+      document.documentElement.dataset.tema = hedef.dataset.tema;
+      localStorage.setItem(TEMA, hedef.dataset.tema);
+      ciz();
+    }
+  });
+
+  window.addEventListener("hashchange", () => {
+    ciz();
+    window.scrollTo(0, 0);
+  });
+
+  if (!location.hash) location.hash = "#/bugun";
+  ciz();
+  setInterval(saatCiz, 400);
+})();
+
+  </script>
+</body>
+</html>
