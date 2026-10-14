@@ -6,22 +6,22 @@ Sadece backend. Yeni çerçeve koleksiyonu yok. Aynı not servisi 24 hafta büy�
 
 ## Süre
 
-Günde **3 saat**, haftada **6 gün**. Pazar yok.
+Günde **2 saat**, haftada **6 gün**. Pazar yok.
 
 | | |
 | --- | --- |
 | Başlangıç | 19 Ekim 2026 pazartesi |
 | Bitiş | 3 Nisan 2027 cumartesi |
 | Gün | 144 |
-| Saat | 432 |
+| Saat | 288 |
 
 | Blok | Süre | İş |
 | --- | --- | --- |
-| 1 | 50 dk | Günün kavramı. Not al, örnek çalıştır. |
-| Mola | 10 dk | |
-| 2 | 70 dk | Uygulama. Bitiş şartı sağlanana kadar. |
-| Mola | 10 dk | |
-| 3 | 40 dk | Kodu bilerek boz, hatayı oku, düzelt, birine anlatır gibi yaz. |
+| 1 | 40 dk | Günün kavramı. Not al, örnek çalıştır. |
+| Mola | 5 dk | |
+| 2 | 55 dk | Uygulama. Bitiş şartı sağlanana kadar. |
+| Mola | 5 dk | |
+| 3 | 15 dk | Kodu bilerek boz, hatayı oku, düzelt, birine anlatır gibi yaz. |
 
 Kaçırılan gün ertesi güne eklenmez. Ertesi gün bir sonraki konudur.
 
@@ -33,7 +33,7 @@ Sayfa ders içindir. Kodu sayfaya yazma.
 
 Gün 1 dosyası `src/day-01/notes.js`. Üç fonksiyonun içindeki `throw` satırını sil, kendi kodunu yaz. `src/day-01/notes.test.js` dosyasına dokunma. Sonraki günlerin dosyası, o günün uygulama bölümünde yazar.
 
-Tablette GitHub hesabınla [kodu aç](https://codespaces.new/ilkcankopar2-cmd/koparlar). Soldan dosyayı seç. Alttaki terminale komutu yaz. Takılınca gün numarasını ve hatanın tamamını yapıştırırsın.
+Dosyayı sen açma. Kodu sohbete yaz. Ben dosyaya koyup testi çalıştırırım. Takılınca gün numarasını ve hatanın tamamını yapıştırırsın.
 
 Bugün gün 1. Bitmiş sayılması için:
 

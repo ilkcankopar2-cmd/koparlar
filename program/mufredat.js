@@ -8,31 +8,31 @@ export const TOPLAM_GUN = 144;
 export const BLOKLAR = [
   {
     ad: "Kavram",
-    dk: 50,
+    dk: 40,
     mola: false,
     yazi: "Günün metnini oku. Varsa kısa örneği çalıştır. İki cümleyle kendi ağzından yaz.",
   },
   {
     ad: "Mola",
-    dk: 10,
+    dk: 5,
     mola: true,
     yazi: "Ekranı bırak.",
   },
   {
     ad: "Uygulama",
-    dk: 70,
+    dk: 55,
     mola: false,
-    yazi: "Günün işini yaz. Bitiş şartı sağlanana kadar devam et.",
+    yazi: "Kodu sohbete yaz. Test yeşil olana kadar devam et.",
   },
   {
     ad: "Mola",
-    dk: 10,
+    dk: 5,
     mola: true,
     yazi: "Ekranı bırak.",
   },
   {
     ad: "Boz",
-    dk: 40,
+    dk: 15,
     mola: false,
     yazi: "Kodu bilerek boz. Hatanın tamamını oku. Düzelt. Birine anlatır gibi beş cümle yaz.",
   },

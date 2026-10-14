@@ -142,7 +142,7 @@
   function saatKutusu() {
     const saat = tick();
     const blok = seri.bloklar[saat.faz];
-    const etiket = saat.bitti ? "3 saat doldu" : blok.ad;
+    const etiket = saat.bitti ? `${seri.meta.gunlukSaat} saat doldu` : blok.ad;
     const yazi = saat.bitti ? "Günün süresi bitti. Bitiş şartına bak." : blok.yazi;
     const dugme = saat.calisiyor ? "Duraklat" : "Başlat";
     return `<section class="saat" aria-label="Günün süresi">
@@ -161,9 +161,9 @@
   function sayilar() {
     const meta = seri.meta;
     return `<dl class="sayilar">
-      <div><dt>Günde</dt><dd>3 saat</dd></div>
+      <div><dt>Günde</dt><dd>${meta.gunlukSaat} saat</dd></div>
       <div><dt>Bitiş</dt><dd>3 Nisan 2027</dd></div>
-      <div><dt>Toplam</dt><dd>432 saat</dd></div>
+      <div><dt>Toplam</dt><dd>${meta.toplamSaat} saat</dd></div>
     </dl>
     <p class="genis">${esc(meta.baslangicYazi)} başlar. ${esc(meta.bitisYazi)} biter. 24 hafta, 144 gün. Pazartesi–cumartesi, pazar yok.</p>`;
   }
@@ -230,8 +230,7 @@
       ${gun.n === 1
         ? `<p>Dosya <code>src/day-01/notes.js</code>. Üç fonksiyonun içindeki <code>throw</code> satırını sil, yerine kendi kodunu yaz. <code>src/day-01/notes.test.js</code> dosyasına dokunma.</p>`
         : `<p>Dosya yolu yukarıdaki uygulamada yazar. Test dosyasına dokunma.</p>`}
-      <p>Tablette GitHub hesabınla şu bağlantıyı aç. Soldan dosyayı seç. Alttaki terminalde günün komutunu yaz. Gün 1 komutu <code>npm run day</code>.</p>
-      <a class="tam" href="https://codespaces.new/ilkcankopar2-cmd/koparlar">Kodu tablette aç</a>
+      <p>Dosyayı sen açma. Kodu bu sohbete yaz. Ben dosyaya koyup testi çalıştırırım. Gün 1 komutu <code>npm run day</code>.</p>
       <h2>Bitti sayılır</h2>
       <p>${esc(gun.bitti)}</p>
       <button type="button" class="tam" data-eylem="bitti" data-n="${gun.n}">${bitti ? "İşareti kaldır" : "Bugün bitti"}</button>
@@ -282,7 +281,7 @@
     baslik.textContent = "Düzen";
     const temaSimdi = document.documentElement.dataset.tema;
     ekran.innerHTML = `${sayilar()}
-      <h2>Üç saat nasıl bölünür</h2>
+      <h2>İki saat nasıl bölünür</h2>
       <ol class="bloklar">
         ${seri.bloklar
           .map((blok) => `<li><strong>${blok.dk} dk</strong> ${esc(blok.ad)}. ${esc(blok.yazi)}</li>`)
@@ -292,7 +291,7 @@
       <p>Sayfayı dikey tut. Satır kısa kalsın.</p>
       <p>Kod bloğu 70 dakikadır. Cam klavye yetmez. Bluetooth klavye bağla.</p>
       <p>Kod <code>src/day-01/notes.js</code> ile başlar. Sonraki günlerin dosyası, o günün uygulama bölümünde yazar. Test dosyasına dokunma.</p>
-      <p>Tablette GitHub’a gir, “Kodu tablette aç”a bas. Bu, tarayıcıda düzenleyici ve terminal açar. Soldan dosyayı seç, alttaki terminale komutu yaz.</p>
+      <p>Dosyayı sen açma. Kodu sohbete yaz. Ben ilgili dosyaya koyup o günün testini çalıştırırım.</p>
       <p>Docker 32. günde, Node'un çalıştığı yerdedir. Tablete Docker kurma.</p>
       <h2>Kaçırılan gün</h2>
       <p>Ertelenmez. Ertesi gün bir sonraki konudur. Aynı günü iki kez yapmak serbest; sıradaki günü biriktirmek değil.</p>
@@ -338,7 +337,7 @@
     if (!sure) return;
     const blok = seri.bloklar[saat.faz];
     sure.textContent = sureYazi(saat.kalanMs);
-    ekran.querySelector("[data-faz]").textContent = saat.bitti ? "3 saat doldu" : blok.ad;
+    ekran.querySelector("[data-faz]").textContent = saat.bitti ? `${seri.meta.gunlukSaat} saat doldu` : blok.ad;
     ekran.querySelector("[data-faz-yazi]").textContent = saat.bitti
       ? "Günün süresi bitti. Bitiş şartına bak."
       : blok.yazi;
