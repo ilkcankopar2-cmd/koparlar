@@ -225,6 +225,13 @@
       ${ornek}
       <h2>Uygulama</h2>
       ${paragraflar(gun.uygulama)}
+      <h2>Nereye</h2>
+      <p>Bu sayfa ders içindir. Kodu buraya yazma.</p>
+      ${gun.n === 1
+        ? `<p>Dosya <code>src/day-01/notes.js</code>. Üç fonksiyonun içindeki <code>throw</code> satırını sil, yerine kendi kodunu yaz. <code>src/day-01/notes.test.js</code> dosyasına dokunma.</p>`
+        : `<p>Dosya yolu yukarıdaki uygulamada yazar. Test dosyasına dokunma.</p>`}
+      <p>Tablette GitHub hesabınla şu bağlantıyı aç. Soldan dosyayı seç. Alttaki terminalde günün komutunu yaz. Gün 1 komutu <code>npm run day</code>.</p>
+      <a class="tam" href="https://codespaces.new/ilkcankopar2-cmd/koparlar">Kodu tablette aç</a>
       <h2>Bitti sayılır</h2>
       <p>${esc(gun.bitti)}</p>
       <button type="button" class="tam" data-eylem="bitti" data-n="${gun.n}">${bitti ? "İşareti kaldır" : "Bugün bitti"}</button>
@@ -284,7 +291,8 @@
       <h2>Tablet</h2>
       <p>Sayfayı dikey tut. Satır kısa kalsın.</p>
       <p>Kod bloğu 70 dakikadır. Cam klavye yetmez. Bluetooth klavye bağla.</p>
-      <p>Node 20 bu depoda çalışır. Tablet Node çalıştırmıyorsa tabletin tarayıcısında bir bulut ortam aç; test orada koşar. Gün 1 komutu npm run day.</p>
+      <p>Kod <code>src/day-01/notes.js</code> ile başlar. Sonraki günlerin dosyası, o günün uygulama bölümünde yazar. Test dosyasına dokunma.</p>
+      <p>Tablette GitHub’a gir, “Kodu tablette aç”a bas. Bu, tarayıcıda düzenleyici ve terminal açar. Soldan dosyayı seç, alttaki terminale komutu yaz.</p>
       <p>Docker 32. günde, Node'un çalıştığı yerdedir. Tablete Docker kurma.</p>
       <h2>Kaçırılan gün</h2>
       <p>Ertelenmez. Ertesi gün bir sonraki konudur. Aynı günü iki kez yapmak serbest; sıradaki günü biriktirmek değil.</p>

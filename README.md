@@ -29,7 +29,11 @@ Kod için Bluetooth klavye kullan. Cam klavye 70 dakika taşımaz. Node 20 bu de
 
 ## Gün nasıl başlar
 
-Sayfada o günün kavramı, uygulaması ve bitiş şartı var. Kodu sen yazarsın. Takılınca gün numarasını ve hatanın tamamını yapıştırırsın.
+Sayfa ders içindir. Kodu sayfaya yazma.
+
+Gün 1 dosyası `src/day-01/notes.js`. Üç fonksiyonun içindeki `throw` satırını sil, kendi kodunu yaz. `src/day-01/notes.test.js` dosyasına dokunma. Sonraki günlerin dosyası, o günün uygulama bölümünde yazar.
+
+Tablette GitHub hesabınla [kodu aç](https://codespaces.new/ilkcankopar2-cmd/koparlar). Soldan dosyayı seç. Alttaki terminale komutu yaz. Takılınca gün numarasını ve hatanın tamamını yapıştırırsın.
 
 Bugün gün 1. Bitmiş sayılması için:
 

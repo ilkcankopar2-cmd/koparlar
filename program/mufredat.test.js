@@ -60,6 +60,13 @@ describe("backend seri takvimi", () => {
     }
   });
 
+  it("çalışma sayfası kodun nereye yazılacağını söyler", async () => {
+    const html = await readFile(new URL("../calisma/index.html", import.meta.url), "utf8");
+    assert.match(html, /src\/day-01\/notes\.js/);
+    assert.match(html, /codespaces\.new\/ilkcankopar2-cmd\/koparlar/);
+    assert.match(html, /npm run day/);
+  });
+
   it("ilk gün mevcut not defterine bağlı", () => {
     assert.match(seri.gunler[0].uygulama, /src\/day-01\/notes\.js/);
     assert.match(seri.gunler[0].bitti, /npm run day/);
